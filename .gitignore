@@ -1,0 +1,7 @@
+.idea/
+**.project
+**.settings
+**.iml
+**.jar
+**/output*/
+**/target*/

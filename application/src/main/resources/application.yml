@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: Searching And Recommend
+solr:
+  address: http://localhost:8983/solr
+  connectionTimeout: 10000
+  socketTimeout: 60000
+  collectionName: films
+server:
+  port: 9000
