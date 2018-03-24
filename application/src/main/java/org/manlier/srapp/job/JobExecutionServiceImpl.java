@@ -49,7 +49,7 @@ public class JobExecutionServiceImpl implements JobExecutionService, DisposableB
 
     @Override
     public void destroy() throws Exception {
-        String tmpDir = System.getProperty("java.io.tmpDir");
+        String tmpDir = System.getProperty("java.io.tmpdir");
         Path path = Paths.get(tmpDir, APP_DEP_ARCHIVE_NAME);
         Files.delete(path);
     }
