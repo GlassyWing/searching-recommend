@@ -21,9 +21,8 @@ public interface CompsDAO {
      * 添加一个构件
      *
      * @param component 构件对象
-     * @return 添加成功的构件数量
      */
-    int addComponent(Component component) throws IOException;
+    void addComponent(Component component) throws IOException;
 
     /**
      * 添加多个构件
@@ -37,9 +36,8 @@ public interface CompsDAO {
      * 更新一个构件信息
      *
      * @param component 构件对象
-     * @return 更新成功的构件数量
      */
-    int updateComponent(Component component) throws IOException;
+    void updateComponent(Component component) throws IOException;
 
     /**
      * 更新多个构件
@@ -53,9 +51,8 @@ public interface CompsDAO {
      * 根据构件名删除一个构件
      *
      * @param compName 构件名
-     * @return 删除成功的构件数量
      */
-    int deleteComponentByName(String compName) throws IOException;
+    void deleteComponentByName(String compName) throws IOException;
 
     /**
      * 根据构件名删除多个构件

@@ -17,9 +17,21 @@
             <includes>
                 <include>org.manlier.analysis:*</include>
                 <include>org.manlier.common:*</include>
+                <!--包括HBase-->
                 <include>org.apache.hbase:*</include>
+                <include>org.apache.hadoop:*</include>
+                <include>org.apache.avro:*</include>
+                <include>com.yammer.metrics:*</include>
                 <include>com.google.protobuf:*</include>
                 <include>io.netty:*</include>
+
+                <!--rxjava2-->
+                <include>io.reactivex.rxjava2:*</include>
+                <include>org.reactivestreams:*</include>
+
+                <!--jieba-->
+                <include>org.manlier:better-jieba</include>
+
             </includes>
         </dependencySet>
     </dependencySets>

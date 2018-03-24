@@ -8,12 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Error {
 
-    public static Error RESOURCE_DOES_NOT_EXIST =
-            new Error("Sorry, the requested resource does not exist", 34);
-    public static Error RESOURCE_ALREADY_EXIST =
-            new Error("Sorry, the resource expected to add already exist, do you want update?", 35);
-
-
     private String userMessage;     //  用户所见的信息
     private int code;               // 错误码
     private String internalMassage; // 内部可见的信息
@@ -69,7 +63,4 @@ public class Error {
         this.moreInfo = moreInfo;
     }
 
-    public static Error valueOf(Status status) {
-        return new Error(status.message(), status.code());
-    }
 }

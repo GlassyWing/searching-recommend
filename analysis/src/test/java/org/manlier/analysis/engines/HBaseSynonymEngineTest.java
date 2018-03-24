@@ -24,15 +24,12 @@ public class HBaseSynonymEngineTest {
 	@Before
 	public void setUp() throws IOException {
 		Configuration config = HBaseConfiguration.create();
-		engine = new HBaseSynonymEngine("/hbase-site.xml");
+		engine = new HBaseSynonymEngine(config);
 	}
 
 	@Test
 	public void testConnect() throws IOException, ServiceException {
-		Configuration config = new Configuration();
-		config.set("hbase.zookeeper.quorum", "172.18.140.150,172.18.140.151,172.18.0.83");
-		config.set("hbase.zookeeper.property.clientPort", "2181");
-		config.set("zookeeper.znode.parent", "/hbase-unsecure");
+		Configuration config = HBaseConfiguration.create();
 		Connection connection = ConnectionFactory.createConnection(config);
 		Table table = connection.getTable(TableName.valueOf("thesaurus"));
 		HTableDescriptor descriptor = table.getTableDescriptor();
@@ -41,7 +38,7 @@ public class HBaseSynonymEngineTest {
 
 	@Test
 	public void getSynonyms() throws IOException {
-		engine.getSynonyms("一直").forEach(System.out::println);
+		engine.getSynonyms("增添").forEach(System.out::println);
 	}
 
     @Test

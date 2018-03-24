@@ -9,22 +9,24 @@ import org.springframework.context.annotation.Configuration;
 import javax.inject.Inject;
 
 
+/**
+ * Solr的配置文件
+ */
 @Configuration
-@EnableConfigurationProperties(SolrProperties.class)
 public class SolrConfiguration {
 
-	private SolrProperties solrProperties;
+    private SolrProperties solrProperties;
 
-	@Inject
-	public SolrConfiguration(SolrProperties solrProperties) {
-		this.solrProperties = solrProperties;
-	}
+    @Inject
+    public SolrConfiguration(SolrProperties solrProperties) {
+        this.solrProperties = solrProperties;
+    }
 
-	@Bean
-	public SolrClient solrClient() {
-		return new HttpSolrClient.Builder(solrProperties.getAddress())
-				.withConnectionTimeout(solrProperties.getConnectionTimeout())
-				.withSocketTimeout(solrProperties.getSocketTimeout())
-				.build();
-	}
+    @Bean
+    public SolrClient solrClient() {
+        return new HttpSolrClient.Builder(solrProperties.getAddress())
+                .withConnectionTimeout(solrProperties.getConnectionTimeout())
+                .withSocketTimeout(solrProperties.getSocketTimeout())
+                .build();
+    }
 }

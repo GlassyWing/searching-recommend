@@ -2,23 +2,18 @@ package org.manlier.srapp.dto.result;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public abstract class UpdateResult<R> implements Result<Map<String, Object>> {
+public class UpdateResult<R> extends QueryResult<R> {
 
-    protected final Map<String, Object> changes;
 
-    public UpdateResult(R old, R now) {
-        this.changes = new HashMap<>();
-        this.resolve(old, now);
+    public UpdateResult(List<R> data) {
+        super(data);
     }
 
-    public abstract void resolve(R old, R now);
-
-
     @JsonProperty("changes")
-    public Map<String, Object> getData() {
-        return changes;
+    @Override
+    public List<R> getData() {
+        return super.getData();
     }
 }

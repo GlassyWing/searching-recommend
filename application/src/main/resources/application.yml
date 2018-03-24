@@ -1,10 +1,19 @@
 spring:
   application:
     name: Searching And Recommend
+  servlet:
+      multipart:
+        max-file-size: 3MB
+        max-request-size: 3MB
 solr:
   address: http://node2.hdp:8983/solr
   connectionTimeout: 10000
   socketTimeout: 60000
   collectionName: compCollection
+storage:
+  location: uploads
+  defaultComponentsDir: input/symbols
+  defaultSynonymsDir:   input/synonyms
+#  location: D:\a_documents\temp\uploads\
 server:
   port: 9000

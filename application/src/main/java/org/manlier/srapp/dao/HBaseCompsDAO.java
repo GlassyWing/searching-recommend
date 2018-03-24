@@ -4,6 +4,7 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.manlier.srapp.entities.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -22,7 +23,7 @@ public class HBaseCompsDAO implements CompsDAO {
     private Connection connection;
 
     @Inject
-    public HBaseCompsDAO(Connection connection) {
+    public HBaseCompsDAO( Connection connection) {
         this.connection = connection;
     }
 
@@ -45,12 +46,11 @@ public class HBaseCompsDAO implements CompsDAO {
     }
 
     @Override
-    public int addComponent(Component component) throws IOException {
+    public void addComponent(Component component) throws IOException {
         try (Table table = connection.getTable(TableName.valueOf(TABLE_NAME))) {
             Put put = new Put(Bytes.toBytes(component.getId()));
             put.addColumn(INFO_COLUMNFAMILY, DESC_QUALIFIER, Bytes.toBytes(component.getDesc()));
             table.put(put);
-            return 1;
         }
     }
 
@@ -69,8 +69,8 @@ public class HBaseCompsDAO implements CompsDAO {
     }
 
     @Override
-    public int updateComponent(Component component) throws IOException {
-        return this.addComponent(component);
+    public void updateComponent(Component component) throws IOException {
+        this.addComponent(component);
     }
 
     @Override
@@ -79,12 +79,11 @@ public class HBaseCompsDAO implements CompsDAO {
     }
 
     @Override
-    public int deleteComponentByName(String compName) throws IOException {
+    public void deleteComponentByName(String compName) throws IOException {
         try (Table table = connection.getTable(TableName.valueOf(TABLE_NAME))) {
             Delete delete = new Delete(Bytes.toBytes(compName));
             delete.addFamily(INFO_COLUMNFAMILY);
             table.delete(delete);
-            return 1;
         }
     }
 

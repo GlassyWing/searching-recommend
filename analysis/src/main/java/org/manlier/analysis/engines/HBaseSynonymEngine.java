@@ -17,16 +17,16 @@ import java.util.function.Consumer;
 
 public class HBaseSynonymEngine implements SynonymEngine {
 
-    private Connection connection;
+    private Configuration configuration;
 
-    public HBaseSynonymEngine(Configuration configuration) throws IOException {
-        this.connection = ConnectionFactory.createConnection(configuration);
+    public HBaseSynonymEngine(Configuration configuration) {
+        this.configuration = configuration;
     }
 
-    public HBaseSynonymEngine(String hbaseConfigPath) throws IOException {
+    public HBaseSynonymEngine(String hbaseConfigPath) {
         Configuration conf = HBaseConfiguration.create();
         conf.addResource(new Path(hbaseConfigPath));
-        this.connection = ConnectionFactory.createConnection(conf);
+        this.configuration = conf;
     }
 
     @Override
@@ -34,15 +34,17 @@ public class HBaseSynonymEngine implements SynonymEngine {
         Get get = new Get(Bytes.toBytes(s));
         get.addFamily(HBaseSynonymQuery.SYNONYMS_COLUMNFAMILY);
         List<String> synonyms = new LinkedList<>();
-        try (Table table = connection.getTable(TableName.valueOf(HBaseSynonymQuery.TABLE_NAME))) {
-            Result result = table.get(get);
+        try (Connection connection = ConnectionFactory.createConnection(configuration)) {
+            try (Table table = connection.getTable(TableName.valueOf(HBaseSynonymQuery.TABLE_NAME))) {
+                Result result = table.get(get);
 
-            if (result.isEmpty()) {
-                return null;
-            }
-            for (Cell cell : result.listCells()) {
-                byte[] column = CellUtil.cloneQualifier(cell);
-                synonyms.add(Bytes.toString(column));
+                if (result.isEmpty()) {
+                    return null;
+                }
+                for (Cell cell : result.listCells()) {
+                    byte[] column = CellUtil.cloneQualifier(cell);
+                    synonyms.add(Bytes.toString(column));
+                }
             }
         }
         return synonyms;
@@ -50,19 +52,21 @@ public class HBaseSynonymEngine implements SynonymEngine {
 
     public void scanThesaurus(Consumer<List<String>> consumer) throws IOException {
         Scan scan = new Scan();
-        try (Table table = connection.getTable(TableName.valueOf(HBaseSynonymQuery.TABLE_NAME))) {
-            ResultScanner scanner = table.getScanner(scan);
-            List<String> record = new LinkedList<>();
-            scanner.forEach(result -> {
-                String key = Bytes.toString(result.getRow());
-                record.add(key);
-                for (Cell cell : result.listCells()) {
-                    byte[] column = CellUtil.cloneQualifier(cell);
-                    record.add(Bytes.toString(column));
-                }
-                consumer.accept(record);
-                record.clear();
-            });
+        try (Connection connection = ConnectionFactory.createConnection(configuration)) {
+            try (Table table = connection.getTable(TableName.valueOf(HBaseSynonymQuery.TABLE_NAME))) {
+                ResultScanner scanner = table.getScanner(scan);
+                List<String> record = new LinkedList<>();
+                scanner.forEach(result -> {
+                    String key = Bytes.toString(result.getRow());
+                    record.add(key);
+                    for (Cell cell : result.listCells()) {
+                        byte[] column = CellUtil.cloneQualifier(cell);
+                        record.add(Bytes.toString(column));
+                    }
+                    consumer.accept(record);
+                    record.clear();
+                });
+            }
         }
     }
 }

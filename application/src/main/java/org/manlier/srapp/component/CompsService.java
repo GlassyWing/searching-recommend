@@ -1,9 +1,7 @@
-package org.manlier.srapp.services;
+package org.manlier.srapp.component;
 
-import org.apache.solr.client.solrj.SolrServerException;
 import org.manlier.srapp.entities.Component;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +13,7 @@ public interface CompsService {
      * @param id 构件id
      * @return 构件
      */
-    Optional<Component> searchComp(String id) throws IOException;
+    Optional<Component> searchComp(String id);
 
     /**
      * 通过构件描述搜索构件
@@ -24,7 +22,7 @@ public interface CompsService {
      * @param rows 指定最多返回多少个构件
      * @return 构件
      */
-    List<Component> searchComps(String desc, int rows) throws IOException, SolrServerException;
+    List<Component> searchComps(String desc, int rows);
 
     /**
      * 更新构件
@@ -32,15 +30,14 @@ public interface CompsService {
      * @param component 构件
      * @return 原来的组件
      */
-    Optional<Component> updateComp(Component component) throws IOException;
+    Component updateComp(Component component);
 
     /**
      * 根据构件id删除构件
      *
      * @param id 构件id
-     * @return 删除成功的个数
      */
-    int deleteComp(String id) throws IOException;
+    void deleteComp(String id);
 
     /**
      * 添加一个构件
@@ -48,6 +45,6 @@ public interface CompsService {
      * @param component 构件
      * @return 添加成功的个数
      */
-    int addComp(Component component) throws IOException;
+    Component addComp(Component component);
 
 }

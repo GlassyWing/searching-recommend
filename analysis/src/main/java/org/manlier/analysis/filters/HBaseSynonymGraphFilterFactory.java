@@ -2,6 +2,7 @@ package org.manlier.analysis.filters;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -33,12 +34,13 @@ import java.util.Map;
  * 自定义同义词过滤器工厂
  */
 public class HBaseSynonymGraphFilterFactory extends TokenFilterFactory implements ResourceLoaderAware {
-    private final String synonyms;
-    private final boolean ignoreCase;
-    private final String tokenizerFactory;
+    private Logger logger = Logger.getLogger(getClass());
+    private final String synonyms;          //同义词词典的位置
+    private final boolean ignoreCase;       //ignoreCase表示再分词匹配的时候要不要忽略大小写
+    private final String tokenizerFactory;  //在词典表中读取一个字符串要进行分词，这个指定使用的分词器工厂
     private final String format;
     private final boolean expand;
-    private final String analyzerName;
+    private final String analyzerName;      //在词典表中读取一个字符串要进行分词，这个指定使用的分词器
     private final Map<String, String> tokArgs = new HashMap<>();
     private SynonymMap map;
     private HBaseSynonymEngine engine;
@@ -56,6 +58,8 @@ public class HBaseSynonymGraphFilterFactory extends TokenFilterFactory implement
         this.expand = this.getBoolean(args, "expand", true);
         this.analyzerName = this.get(args, "analyzer");
         this.tokenizerFactory = this.get(args, "tokenizerFactory");
+
+//        根据HBase连接参数创建配置对象
         Configuration config = HBaseConfiguration.create();
         config.set("hbase.zookeeper.quorum", get(args, "ZKQuorum"));
         config.set("hbase.zookeeper.property.clientPort", get(args, "ZKPort"));
@@ -79,13 +83,14 @@ public class HBaseSynonymGraphFilterFactory extends TokenFilterFactory implement
             }
         }
 
+//        创建HBase数据库访问对象
         engine = new HBaseSynonymEngine(config);
 
     }
 
     @Override
     public TokenStream create(TokenStream input) {
-        return (TokenStream) (this.map.fst == null ? input : new SynonymGraphFilter(input, this.map, this.ignoreCase));
+        return this.map.fst == null ? input : new SynonymGraphFilter(input, this.map, this.ignoreCase);
     }
 
 
@@ -142,8 +147,19 @@ public class HBaseSynonymGraphFilterFactory extends TokenFilterFactory implement
         }
     }
 
+    /**
+     * 载入同义词库
+     * @param loader 资源载入器
+     * @param cname 使用的格式化对象的类名
+     * @param dedup 载入字典时是否排除重复
+     * @param analyzer  分词器
+     * @return  SynonymMap 对象
+     * @throws IOException  连接数据库时的异常
+     * @throws ParseException   格式不正确时报错
+     */
     @SuppressWarnings("unchecked")
     protected SynonymMap loadSynonyms(ResourceLoader loader, String cname, boolean dedup, Analyzer analyzer) throws IOException, ParseException {
+
         CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
         Class clazz = loader.findClass(cname, SynonymMap.Parser.class);
 
@@ -155,21 +171,21 @@ public class HBaseSynonymGraphFilterFactory extends TokenFilterFactory implement
         }
 
         List<String> files = this.splitFileNames(this.synonyms);
-        Iterator var9 = files.iterator();
 
-        while(var9.hasNext()) {
-            String file = (String)var9.next();
+        for (String file : files) {
+            logger.info("Loading synonyms from file: " + file);
             decoder.reset();
             parser.parse(new InputStreamReader(loader.openResource(file), decoder));
         }
 
+        logger.info("Loading synonyms from database");
         engine.scanThesaurus(record -> {
             try {
                 String r = String.join(",", record);
                 Reader reader = new StringReader(r);
                 parser.parse(reader);
-            } catch (IOException | ParseException e) {
-                throw new RuntimeException(e);
+            } catch (ParseException | IOException e) {
+                logger.error("Format error, skip this record:", e);
             }
         });
 
