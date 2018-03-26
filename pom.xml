@@ -11,8 +11,6 @@
     <modules>
         <module>starter</module>
         <module>sr-meta</module>
-        <module>recommend</module>
-        <module>analysis</module>
         <module>application</module>
         <module>common</module>
     </modules>
