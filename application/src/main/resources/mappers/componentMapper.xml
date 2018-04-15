@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.manlier.srapp.dao.ComponentDAO">
+
+    <select id="getComponentByName" resultType="Component">
+        SELECT * FROM components WHERE name = #{name}
+    </select>
+
+    <select id="getComponentById" resultType="Component">
+        SELECT * FROM components WHERE id = #{id}
+    </select>
+
+    <insert id="addComponent" parameterType="Component">
+        UPSERT INTO components (id, name, describe)
+        VALUES (NEXT VALUE FOR components.seq, #{component.name}, #{component.describe})
+    </insert>
+
+    <update id="updateComponent" parameterType="Component">
+        UPSERT INTO components (name, describe)
+        VALUES (#{component.name}, #{component.describe})
+    </update>
+
+    <delete id="deleteComponentByName">
+        DELETE FROM components WHERE name=#{name}
+    </delete>
+
+</mapper>
