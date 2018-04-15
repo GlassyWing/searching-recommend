@@ -2,23 +2,15 @@ package org.manlier.srapp.storage;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.nio.file.Paths;
+
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
     /**
      * Folder location for storing files
      */
-    private String location = "upload-dir";
-
-    /**
-     * 默认位于hdfs的构件目录
-     */
-    private String defaultComponentsDir = "input/symbols";
-
-    /**
-     * 默认位于hdfs的同义词目录
-     */
-    private String defaultSynonymsDir = "input/synonyms";
+    private String location = String.valueOf(Paths.get(System.getProperty("java.io.tmpdir"), "srapp-upload-dir"));
 
     public String getLocation() {
         return location;
@@ -28,19 +20,4 @@ public class StorageProperties {
         this.location = location;
     }
 
-    public String getDefaultComponentsDir() {
-        return defaultComponentsDir;
-    }
-
-    public void setDefaultComponentsDir(String defaultComponentsDir) {
-        this.defaultComponentsDir = defaultComponentsDir;
-    }
-
-    public String getDefaultSynonymsDir() {
-        return defaultSynonymsDir;
-    }
-
-    public void setDefaultSynonymsDir(String defaultSynonymsDir) {
-        this.defaultSynonymsDir = defaultSynonymsDir;
-    }
 }
