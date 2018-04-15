@@ -1,7 +1,7 @@
 package org.manlier.srapp.dto.result.component;
 
 import org.manlier.srapp.dto.result.UpdateResult;
-import org.manlier.srapp.entities.Component;
+import org.manlier.srapp.domain.Component;
 
 import java.util.List;
 

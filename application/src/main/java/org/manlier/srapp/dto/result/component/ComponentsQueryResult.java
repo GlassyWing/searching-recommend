@@ -2,7 +2,7 @@ package org.manlier.srapp.dto.result.component;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.manlier.srapp.dto.result.QueryResult;
-import org.manlier.srapp.entities.Component;
+import org.manlier.srapp.domain.Component;
 
 import java.util.List;
 
