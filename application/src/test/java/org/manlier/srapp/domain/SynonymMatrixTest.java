@@ -1,4 +1,4 @@
-package org.manlier.srapp.entities;
+package org.manlier.srapp.domain;
 
 import org.junit.Before;
 import org.junit.Test;
