@@ -1,17 +1,20 @@
 package org.manlier.srapp;
 
 import org.manlier.srapp.config.SolrProperties;
-import org.manlier.srapp.job.JobExecutionService;
+import org.manlier.srapp.constraints.StorageDirs;
 import org.manlier.srapp.storage.StorageProperties;
 import org.manlier.srapp.storage.StorageService;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 
+@MapperScan("org.manlier.srapp.dao")
+@EnableAsync
 @SpringBootApplication
 @EnableConfigurationProperties({StorageProperties.class, SolrProperties.class})
 public class Application {
@@ -22,13 +25,11 @@ public class Application {
 
     @Bean
     CommandLineRunner init(
-            @Qualifier("HDFSStorageService") StorageService storageService
-            , JobExecutionService jobExecutionService) {
+            StorageService storageService) {
 
         return (args -> {
-            jobExecutionService.init();
             storageService.deleteAll(".");
-            storageService.init("comps");
+            storageService.init(StorageDirs.names());
         });
     }
 
