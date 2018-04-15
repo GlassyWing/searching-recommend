@@ -2,11 +2,10 @@ package org.manlier.srapp.config;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.inject.Inject;
 
 
 /**
@@ -17,7 +16,7 @@ public class SolrConfiguration {
 
     private SolrProperties solrProperties;
 
-    @Inject
+    @Autowired
     public SolrConfiguration(SolrProperties solrProperties) {
         this.solrProperties = solrProperties;
     }
