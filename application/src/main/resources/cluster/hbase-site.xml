@@ -1,7 +1,7 @@
 <configuration>
     <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>localhost</value>
+        <value>172.18.140.150,172.18.140.151,172.18.0.83</value>
     </property>
     <property>
         <name>hbase.zookeeper.property.clientPort</name>
