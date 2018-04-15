@@ -1,35 +1,48 @@
 package org.manlier.srapp.controllers;
 
-import org.apache.log4j.Logger;
 import org.manlier.srapp.component.ComponentAlreadyExistsException;
 import org.manlier.srapp.component.ComponentNotFoundException;
 import org.manlier.srapp.constraints.Error;
+import org.manlier.srapp.constraints.StorageDirs;
 import org.manlier.srapp.dto.result.ErrorResult;
 import org.manlier.srapp.dto.result.base.*;
 import org.manlier.srapp.dto.result.component.ComponentsQueryResult;
 import org.manlier.srapp.dto.result.component.ComponentsUpdateResult;
-import org.manlier.srapp.entities.Component;
-import org.manlier.srapp.component.CompsService;
+import org.manlier.srapp.domain.Component;
+import org.manlier.srapp.component.ComponentService;
+import org.manlier.srapp.dto.result.storage.FilesQueryResult;
+import org.manlier.srapp.storage.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.inject.Inject;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.manlier.srapp.constraints.Limits.*;
 
 @RestController
-public class CompsController {
+public class ComponentsController {
 
-    private CompsService service;
-    private Logger logger = Logger.getLogger(getClass());
+    private ComponentService service;
+    private StorageService<Path> storageService;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Inject
-    public CompsController(CompsService service) {
+    @Autowired
+    public ComponentsController(ComponentService service
+            , StorageService<Path> storageService) {
         this.service = service;
+        this.storageService = storageService;
     }
 
     /**
@@ -52,15 +65,15 @@ public class CompsController {
     }
 
     /**
-     * 按构件id查询构件
+     * 按构件name查询构件
      *
-     * @param id 构件id
+     * @param name 构件name
      * @return 响应结果
      */
-    @GetMapping(value = "/api/v1/comps/{id:.+}")
-    public ResponseEntity<Result> searchComp(@PathVariable("id") String id) {
-        logger.debug("Try to find specified component with id: " + id);
-        Optional<Component> component = service.searchComp(id);
+    @GetMapping(value = "/api/v1/comps/{name:.+}")
+    public ResponseEntity<Result> searchComp(@PathVariable("name") String name) {
+        logger.debug("Try to find specified component with id: " + name);
+        Optional<Component> component = service.searchComp(name);
         ComponentsQueryResult queryResult;
         if (component.isPresent()) {
             queryResult = new ComponentsQueryResult(
@@ -114,6 +127,36 @@ public class CompsController {
                 Collections.singletonList(service.updateComp(component)));
         logger.debug("Update component: " + component.getId() + " has done.");
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 构件导入
+     *
+     * @param files 构件文件对象
+     * @return 导入成功的文件名
+     */
+    @PostMapping(value = "/api/v1/comps/upload")
+    public CompletableFuture<ResponseEntity<Result>> importComps(@RequestParam("files") MultipartFile[] files) {
+        logger.debug(Arrays.toString(files));
+        return storageService.store(files, StorageDirs.COMPS.name())
+                .thenApply(pathStream -> {
+                    List<Path> paths = pathStream.collect(Collectors.toList());
+                    service.importComponents(paths.stream());
+                    return paths;
+                }).thenApply(paths -> {
+                    storageService.deleteAll(paths.stream());
+                    return paths;
+                }).handle((paths, throwable) -> {
+                    if (throwable != null) {
+                        Error error = new Error(throwable.getMessage(), 104);
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(new ErrorResult(error));
+                    } else {
+                        return ResponseEntity.ok(new FilesQueryResult(paths.stream()
+                                .map(path -> path.getFileName().toString())
+                                .collect(Collectors.toList())));
+                    }
+                });
     }
 
     @ExceptionHandler(ComponentNotFoundException.class)
