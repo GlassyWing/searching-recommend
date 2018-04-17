@@ -9,9 +9,31 @@ public class Schemas {
      */
     public static class HBaseComponentSchema {
         public final static String TABLE_NAME = "components";
-        public final static byte[] INFO_COLUMNFAMILY = Bytes.toBytes("info");
-        public final static byte[] NAME_QUALIFIER = Bytes.toBytes("name");
-        public final static byte[] DESC_QUALIFIER = Bytes.toBytes("desc");
+        public final static String ID_QUALIFIER = "ID";
+        public final static String NAME_QUALIFIER = "NAME";
+        public final static String DESC_QUALIFIER = "DESCRIBE";
+    }
+
+    public static class HBaseUsersSchema {
+        public final static String TABLE_NAME = "users";
+        public final static String ID_QUALIFIER = "ID";
+        public final static String UUID_QUALIFIER = "UUID";
+    }
+
+    public static class HBaseHistorySchema {
+        public final static String TABLE_NAME = "history";
+        public final static String USER_QUALIFIER = "USERNAME";
+        public final static String COMP_QUALIFIER = "COMPNAME";
+        public final static String FOLLOW_COMP_QUALIFIER = "FOLLOWCOMPNAME";
+        public final static String FREQ_QUALIFIER = "FREQ";
+    }
+
+    public static class HBasePredictionSchema {
+        public final static String TABLE_NAME = "prediction";
+        public final static String USER_QUALIFIER = "USERNAME";
+        public final static String COMP_QUALIFIER = "COMPNAME";
+        public final static String FOLLOW_COMP_QUALIFIER = "FOLLOWCOMPNAME";
+        public final static String PREDICTION_QUALIFIER = "FREQ";
     }
 
     /**

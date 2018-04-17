@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.manlier.srapp.constraints.Limits.*;
 
@@ -149,6 +148,7 @@ public class ComponentsController {
                 }).handle((paths, throwable) -> {
                     if (throwable != null) {
                         Error error = new Error(throwable.getMessage(), 104);
+                        storageService.deleteAll(paths.stream());
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(new ErrorResult(error));
                     } else {

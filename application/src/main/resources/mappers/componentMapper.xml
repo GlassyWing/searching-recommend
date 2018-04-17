@@ -15,7 +15,7 @@
 
     <insert id="addComponent" parameterType="Component">
         UPSERT INTO components (id, name, describe)
-        VALUES (NEXT VALUE FOR components.seq, #{component.name}, #{component.describe})
+        VALUES (NEXT VALUE FOR components_seq, #{component.name}, #{component.describe})
     </insert>
 
     <update id="updateComponent" parameterType="Component">

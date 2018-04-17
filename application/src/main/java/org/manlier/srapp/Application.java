@@ -2,6 +2,7 @@ package org.manlier.srapp;
 
 import org.manlier.srapp.config.SolrProperties;
 import org.manlier.srapp.constraints.StorageDirs;
+import org.manlier.srapp.recommend.RecommendService;
 import org.manlier.srapp.storage.StorageProperties;
 import org.manlier.srapp.storage.StorageService;
 import org.mybatis.spring.annotation.MapperScan;
@@ -25,11 +26,13 @@ public class Application {
 
     @Bean
     CommandLineRunner init(
-            StorageService storageService) {
+            StorageService storageService
+            , RecommendService recommendService) {
 
         return (args -> {
             storageService.deleteAll(".");
             storageService.init(StorageDirs.names());
+//            recommendService.init();
         });
     }
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.manlier.srapp.dao.UserDAO">
+
+    <insert id="addUser" parameterType="User">
+        UPSERT INTO users (uuid, id)
+        VALUES (NEXT VALUE FOR users_seq, #{user.uuid})
+    </insert>
+
+    <select id="getUserById" resultType="User">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+
+    <select id="getUserByUUID" resultType="User">
+        SELECT * FROM users WHERE uuid = #{uuid}
+    </select>
+
+    <delete id="deleteUserByUUID">
+        DELETE FROM users WHERE uuid = #{uuid}
+    </delete>
+</mapper>

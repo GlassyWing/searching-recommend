@@ -11,4 +11,27 @@
         <name>zookeeper.znode.parent</name>
         <value>/hbase</value>
     </property>
+    <!-- 允许使用命名空间 -->
+    <property>
+        <name>phoenix.schema.isNamespaceMappingEnabled</name>
+        <value>true</value>
+    </property>
+    <!-- 启用全局索引 -->
+    <property>
+        <name>hbase.regionserver.wal.codec</name>
+        <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
+    </property>
+    <!-- 开启事务支持 -->
+    <property>
+        <name>phoenix.transactions.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>data.tx.snapshot.dir</name>
+        <value>/tmp/tephra/snapshots</value>
+    </property>
+    <property>
+        <name>data.tx.timeout</name>
+        <value>60</value>
+    </property>
 </configuration>

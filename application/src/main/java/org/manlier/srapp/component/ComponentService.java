@@ -10,10 +10,18 @@ public interface ComponentService extends ComponentImporter {
     /**
      * 通过构件名搜索构件
      *
-     * @param name 构件id
+     * @param name 构件名
      * @return 构件
      */
     Optional<Component> searchComp(String name);
+
+    /**
+     * 通过构件id搜索构件
+     *
+     * @param id 构件id
+     * @return 构件
+     */
+    Optional<Component> searchComp(int id);
 
     /**
      * 通过构件描述搜索构件

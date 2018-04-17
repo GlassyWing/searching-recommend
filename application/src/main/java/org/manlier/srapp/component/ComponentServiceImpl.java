@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spire.random.Op;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -49,6 +50,15 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
         } catch (DataAccessException e) {
             throw new ComponentException("Fail to load component: " + name, e);
         }
+    }
+
+    @Override
+    public Optional<Component> searchComp(int id) {
+        Component component = compsDAO.getComponentById(id);
+        if (component == null) {
+            return Optional.empty();
+        }
+        return Optional.of(component);
     }
 
     @Override
