@@ -21,7 +21,7 @@ kafka:
       "[bootstrap.servers]": localhost:9092
       "[key.serializer]": org.apache.kafka.common.serialization.StringSerializer
       "[value.serializer]": org.apache.kafka.common.serialization.StringSerializer
-      "[linger.ms]": 0
+      "[linger.ms]": 1
       "acks": all
       "[batch.size]": 200
       "[block.on.buffer.full]": false
