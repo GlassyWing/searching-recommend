@@ -8,6 +8,24 @@ spring:
       multipart:
         max-file-size: 3MB
         max-request-size: 3MB
+kafka:
+  history:
+    topics:
+      - history
+    kafka-params-consumer:
+      "[bootstrap.servers]": localhost:9092
+      "[group.id]": history
+      "[key.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
+      "[value.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
+    kafka-params-producer:
+      "[bootstrap.servers]": localhost:9092
+      "[key.serializer]": org.apache.kafka.common.serialization.StringSerializer
+      "[value.serializer]": org.apache.kafka.common.serialization.StringSerializer
+      "[linger.ms]": 0
+      "acks": all
+      "[batch.size]": 200
+      "[block.on.buffer.full]": false
+      "[client.id]": history-producer
 solr:
   address: http://node2.hdp:8983/solr
   connectionTimeout: 10000
