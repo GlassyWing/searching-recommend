@@ -4,6 +4,7 @@ import org.manlier.srapp.domain.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface ComponentService extends ComponentImporter {
 
@@ -54,5 +55,10 @@ public interface ComponentService extends ComponentImporter {
      * @return 添加成功的个数
      */
     Component addComp(Component component);
+
+    /**
+     * 重建构件库
+     */
+    CompletableFuture<Void> rebuild();
 
 }

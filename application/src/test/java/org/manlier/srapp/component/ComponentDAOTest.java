@@ -43,4 +43,10 @@ public class ComponentDAOTest {
         dao.updateComponent(component);
     }
 
+    @Test
+    public void testGetPagedComponents() {
+        List<Component> components = dao.getPagedComponents(0, 10);
+        System.out.println(components);
+    }
+
 }

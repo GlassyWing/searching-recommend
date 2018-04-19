@@ -13,6 +13,7 @@ import org.manlier.srapp.dao.ComponentDAO;
 import org.manlier.srapp.domain.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spire.random.Op;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -116,6 +118,23 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
         } catch (DataAccessException e) {
             throw new ComponentException("Fail to add component: " + component.getId(), e);
         }
+    }
+
+    @Override
+    @Transactional
+    @Async
+    public CompletableFuture<Void> rebuild() {
+        int offset = 0, limit = 150;
+        while (true) {
+            List<Component> page = compsDAO.getPagedComponents(offset, limit);
+            if (page.size() > 0) {
+                page.parallelStream().forEach(compsDAO::updateComponent);
+                offset += limit;
+            } else {
+                break;
+            }
+        }
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override

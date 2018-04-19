@@ -27,4 +27,8 @@
         DELETE FROM components WHERE name=#{name}
     </delete>
 
+    <select id="getPagedComponents" resultType="Component">
+        SELECT * FROM components LIMIT #{limit} OFFSET #{offset}
+    </select>
+
 </mapper>
