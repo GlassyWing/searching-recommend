@@ -24,7 +24,6 @@ kafka:
       "[linger.ms]": 1
       "acks": all
       "[batch.size]": 200
-      "[block.on.buffer.full]": false
       "[client.id]": history-producer
 solr:
   address: http://node2.hdp:8983/solr
