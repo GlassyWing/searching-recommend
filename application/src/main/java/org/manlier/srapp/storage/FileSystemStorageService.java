@@ -128,6 +128,11 @@ public class FileSystemStorageService implements StorageService<Path> {
 
     @Override
     public void delete(Path path) {
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new StorageException("Cannot delete file: " + path.getFileName());
+        }
         pathSet.remove(path);
     }
 
