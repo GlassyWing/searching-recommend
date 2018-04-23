@@ -23,6 +23,7 @@ public class SolrConfiguration {
 
     @Bean
     public SolrClient solrClient() {
+        // TODO: 替换为CloudSolrClient
         return new HttpSolrClient.Builder(solrProperties.getAddress())
                 .withConnectionTimeout(solrProperties.getConnectionTimeout())
                 .withSocketTimeout(solrProperties.getSocketTimeout())
