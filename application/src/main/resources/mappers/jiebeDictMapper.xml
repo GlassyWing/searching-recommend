@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.manlier.srapp.dao.JiebaDictDAO">
+
+    <select id="loadAll" resultType="Word">
+        SELECT * FROM jieba_dict
+    </select>
+
+    <select id="getWordByName" resultType="Word">
+        SELECT * FROM jieba_dict WHERE name = #{name}
+    </select>
+
+    <update id="updateWord">
+        upsert into jieba_dict (name, weight, tag)
+        values(#{name}, #{weight}, #{tag})
+    </update>
+
+    <update id="updateWordWithNoTag">
+        upsert into jieba_dict (name, weight)
+        values(#{name}, #{weight})
+    </update>
+
+</mapper>

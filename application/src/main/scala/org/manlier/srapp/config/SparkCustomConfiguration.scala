@@ -26,8 +26,5 @@ class SparkCustomConfiguration {
       .getOrCreate()
   }
 
-  @Bean
-  def hbaseConfiguration(): Configuration = {
-    HBaseConfiguration.create()
-  }
+
 }

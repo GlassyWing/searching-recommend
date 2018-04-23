@@ -68,7 +68,7 @@ class HistoryServiceImpl(@Autowired val sparkSession: SparkSession
             val stat = conn.createStatement()
             conn.setAutoCommit(false)
             partitionRecords.foreach(tuple => {
-              println(tuple)
+//              println(tuple)
               stat.addBatch(HistoryDBUtil.generateUpsertSQL(tuple._1, tuple._2, tuple._3, tuple._4))
             })
             stat.executeBatch()

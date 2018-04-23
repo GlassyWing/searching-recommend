@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.manlier.srapp.dao.ThesaurusDAO">
+
+    <sql id="THESAURUS_GROUP">thesaurus_group</sql>
+    <sql id="THESAURUS_BELONG">thesaurus_belong</sql>
+    <sql id="THESAURUS_SEQUENCE">thesaurus_seq</sql>
+
+    <select id="getSynonymsByWord" resultType="String">
+        SELECT synonyms FROM <include refid="THESAURUS_GROUP"/>
+        WHERE groupId =
+        (SELECT groupId FROM <include refid="THESAURUS_BELONG"/> WHERE word = #{word})
+    </select>
+
+    <select id="getSynonymsByGroupId" resultType="String">
+        SELECT synonyms FROM <include refid="THESAURUS_GROUP"/> WHERE groupId = #{groupId}
+    </select>
+
+    <select id="getSynonymGroupId" resultType="Integer">
+        SELECT groupId FROM <include refid="THESAURUS_BELONG"/> WHERE word = #{word}
+    </select>
+
+    <insert id="addBelong">
+        UPSERT INTO <include refid="THESAURUS_BELONG"/>(word, groupId)
+        VALUES (#{word}, #{groupId})
+    </insert>
+
+    <insert id="addSynonymsGroup" parameterType="SynonymsGroupStr">
+        <selectKey keyProperty="synonymsGroup.groupId" resultType="Integer" order="BEFORE">
+            SELECT NEXT VALUE FOR
+            <include refid="THESAURUS_SEQUENCE"/> AS groupId
+        </selectKey>
+        UPSERT INTO <include refid="THESAURUS_GROUP"/> (groupId, synonyms)
+        VALUES (#{synonymsGroup.groupId}, #{synonymsGroup.synonyms})
+    </insert>
+
+    <delete id="deleteBelong">
+        DELETE FROM <include refid="THESAURUS_BELONG"/> WHERE word=#{word}
+    </delete>
+
+    <delete id="deleteSynonymsGroup">
+        DELETE FROM <include refid="THESAURUS_GROUP"/> WHERE groupId = #{groupId}
+    </delete>
+
+    <delete id="deleteBelongGroup">
+        DELETE FROM <include refid="THESAURUS_BELONG"/> WHERE groupId = #{groupId}
+    </delete>
+
+    <delete id="updateSynonymsGroup">
+        UPSERT INTO <include refid="THESAURUS_GROUP"/> (groupId, synonyms)
+        VALUES (#{groupId}, #{synonyms})
+    </delete>
+
+</mapper>
