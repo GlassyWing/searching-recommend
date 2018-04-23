@@ -5,3 +5,5 @@
 **.jar
 **/output*/
 **/target*/
+resource/
+spark-warehouse

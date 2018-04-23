@@ -1,0 +1,31 @@
+DROP TABLE IF EXISTS components;
+DROP SEQUENCE IF EXISTS components_seq;
+DROP TABLE IF EXISTS users;
+DROP SEQUENCE IF EXISTS users_seq;
+DROP TABLE IF EXISTS history;
+DROP TABLE IF EXISTS prediction;
+CREATE TABLE components (name VARCHAR PRIMARY KEY
+,	info.id INTEGER
+,	info.describe varchar
+) REPLICATION_SCOPE=1, SALT_BUCKETS = 3, COLUMN_ENCODED_BYTES = 0;
+
+CREATE SEQUENCE components_seq START 0 INCREMENT BY 1 CACHE 10;
+
+CREATE TABLE users(uuid VARCHAR PRIMARY KEY
+,	id INTEGER
+) SALT_BUCKETS = 3;
+
+CREATE SEQUENCE users_seq START 0 INCREMENT BY 1 CACHE 10;
+
+CREATE TABLE history(userName VARCHAR
+, compName VARCHAR
+, followCompName VARCHAR
+, freq BIGINT
+CONSTRAINT pk PRIMARY KEY (userName, compName, followCompName)
+) SALT_BUCKETS = 3;
+CREATE TABLE prediction(userName VARCHAR
+, compName VARCHAR
+, followCompName VARCHAR
+, prediction BIGINT
+CONSTRAINT pk PRIMARY KEY (userName, compName, followCompName)
+) SALT_BUCKETS = 3;
