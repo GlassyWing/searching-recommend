@@ -6,6 +6,8 @@ import org.manlier.srapp.domain.Component;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ComponentDAO {
 
@@ -46,4 +48,14 @@ public interface ComponentDAO {
      * @param compName 构件名
      */
     void deleteComponentByName(@Param("name") String compName) throws DataAccessException;
+
+
+    /**
+     * 获得指定数量的构件
+     *
+     * @param offset 偏移量
+     * @param limit  数量限制
+     * @return 构件
+     */
+    List<Component> getPagedComponents(@Param("offset") int offset, @Param("limit") int limit);
 }
