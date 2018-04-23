@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.jsoup.Jsoup;
 import org.manlier.common.parsers.CompDocumentParser;
+import org.manlier.srapp.common.AbstractFileImporter;
 import org.manlier.srapp.config.SolrProperties;
 import org.manlier.srapp.constraints.EnvVariables;
 import org.manlier.srapp.dao.ComponentDAO;
@@ -16,7 +17,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spire.random.Op;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class ComponentServiceImpl extends AbstractComponentImporter implements ComponentService {
+public class ComponentServiceImpl extends AbstractFileImporter<Component> implements ComponentService {
 
     private final SolrClient solrClient;
     private final ComponentDAO compsDAO;
@@ -66,7 +66,7 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
     @Override
     public List<Component> searchComps(String desc, int rows) {
         SolrQuery query = new SolrQuery(desc);
-        query.addField("name");
+        query.addField("ID");
         query.addField("describe");
         query.setRows(rows);
         QueryResponse response;
@@ -77,7 +77,7 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
         }
         SolrDocumentList documents = response.getResults();
         return documents.stream()
-                .map(doc -> new Component((String) doc.get("name"), (String) doc.get("desc")))
+                .map(doc -> new Component((String) doc.get("ID"), (String) doc.get("describe")))
                 .collect(Collectors.toList());
     }
 
@@ -138,7 +138,7 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
     }
 
     @Override
-    protected Reader getReader() {
+    protected Reader<Component> getReader() {
         return paths -> {
             CompDocumentParser parser = new CompDocumentParser();
             return paths.parallel().flatMap(path -> {
@@ -155,13 +155,13 @@ public class ComponentServiceImpl extends AbstractComponentImporter implements C
     }
 
     @Override
-    protected Writer getWriter() {
+    protected Writer<Component> getWriter() {
         return components -> components.forEach(compsDAO::addComponent);
     }
 
-    @Override
     @Transactional
-    public void importComponents(Stream<Path> paths) {
-        super.importComponents(paths);
+    @Override
+    public void importFromFiles(Stream<Path> paths) {
+        super.importFromFiles(paths);
     }
 }

@@ -1,12 +1,13 @@
 package org.manlier.srapp.component;
 
+import org.manlier.srapp.common.FileImporter;
 import org.manlier.srapp.domain.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public interface ComponentService extends ComponentImporter {
+public interface ComponentService extends FileImporter {
 
     /**
      * 通过构件名搜索构件
