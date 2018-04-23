@@ -140,7 +140,7 @@ public class ComponentsController {
         return storageService.store(files, StorageDirs.COMPS.name())
                 .thenApply(pathStream -> {
                     List<Path> paths = pathStream.collect(Collectors.toList());
-                    service.importComponents(paths.stream());
+                    service.importFromFiles(paths.stream());
                     return paths;
                 }).thenApply(paths -> {
                     storageService.deleteAll(paths.stream());
