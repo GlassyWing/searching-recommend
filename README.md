@@ -17,7 +17,7 @@ hadoop环境借助Ambari进行搭建，Ambari的安装教程见
 
 [Ambari 2.6.x 本地仓库搭建和离线安装]: https://glassywing.github.io/2018/04/01/blog-02/
 
-需要安装的Hadoop环境有如下几项：
+需要安装的Hadoop环境有如下几项，安装教程见各工具官方文档：
 
 - HDFS
 - MapReduce2
@@ -49,7 +49,73 @@ hadoop环境借助Ambari进行搭建，Ambari的安装教程见
 - 用户使用历史数据库
 - 词库（分词库、同义词库）
 
-数据库定义文件位于`/resource/sql`目录下，可通过`pysql.sh xxx.sql`进行执行SQL语句。
-数据文件位于`/resource/dict`目录下，通过`psql.py -t tableName localhost data.csv`指令进行导入。
+数据库定义文件位于`example/sql`目录下，可通过`pysql.sh xxx.sql`进行执行SQL语句。
+数据文件位于`example/dict`目录下，通过`psql.py -t tableName localhost data.csv`指令进行导入。
 
 ### solr，hbase-indexer配置
+
+#### solr 配置
+
+1. 将位于`example/solr`目录下的`cn_schema_configs`复制到`${SOLR_HOME}/server/solr/configsets`目录下
+2. 并将`better-jieba-solr-1.0-SNAPSHOT.jar`、`phoenix-4.13.1-HBase-1.2-client.jar`复制到`${SOLR_HOME}/server/solr-webapp/WEB-INF/lib/`目录下并替换`protobuf-java-3.1.0.jar`为`protobuf-java-2.5.0.jar`
+3. 创建集合`compCollection`并指定配置集
+
+```shell
+bin/solr create -force -c compCollection \
+-n compCollConfigs \
+-s 1 \
+-rf 1 \
+-d cn_schema_configs
+```
+
+#### hbase-indexer 配置
+
+1. 将`example/hbase-indexer/morphlines.conf`置于`/conf`目录下
+2. 创建索引
+
+```shell
+hbase-indexer add-indexer -n compsindexer \
+--indexer-conf morphline-phoenix-mapper.xml \
+--connection-param solr.zk=localhost:2181/solr \
+--connection-param solr.collection=compsCollection \
+```
+
+### Kafka 配置
+
+1. 启动Kafka服务
+2. 创建topic：history，作为用户使用历史记录的topic
+
+```shell
+kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic history
+```
+
+### application.yml配置
+
+需指定solr服务器地址及参数、zookeeper地址、kafka地址和Kafka Producer、Kafka Comsumer的参数等，具体配置如下所示：
+
+```yml
+kafka:
+  history:
+    topics:
+      - history
+    kafka-params-consumer:
+      "[bootstrap.servers]": localhost:9092
+      "[group.id]": history
+      "[key.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
+      "[value.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
+    kafka-params-producer:
+      "[bootstrap.servers]": localhost:9092
+      "[key.serializer]": org.apache.kafka.common.serialization.StringSerializer
+      "[value.serializer]": org.apache.kafka.common.serialization.StringSerializer
+      "[linger.ms]": 1
+      "acks": all
+      "[batch.size]": 200
+      "[client.id]": history-producer
+solr:
+  address: http://node2.hdp:8983/solr
+  connectionTimeout: 10000
+  socketTimeout: 60000
+  collectionName: compCollection
+```
+
+## 接口说明
