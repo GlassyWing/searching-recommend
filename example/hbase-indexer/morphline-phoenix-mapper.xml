@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!-- table：需要索引的HBase表名称-->
+<!-- mapper：用来实现和读取指定的Morphline配置文件类，固定为MorphlineResultToSolrMapper-->
+<indexer table="COMPONENTS" mapper="com.ngdata.hbaseindexer.morphline.MorphlineResultToSolrMapper" 
+unique-key-formatter="com.gosun.hbaseindexer.uniquekey.PhoenixSaltedUniqueKeyFormatter">
+    <!--param中的name参数用来指定当前配置为morphlineFile文件 -->
+    <!--value用来指定morphlines.conf文件的路径，绝对或者相对路径用来指定本地路径，如果是使用Cloudera Manager来管理morphlines.conf就直接写入值morphlines.conf"-->
+    <param name="morphlineFile" value="/conf/morphlines.conf"/>
+    <!-- The optional morphlineId identifies a morphline if there are multiple morphlines in morphlines.conf -->
+    <param name="morphlineId" value="components"/>
+</indexer>
