@@ -41,6 +41,11 @@ public class DictStateSynService implements Consumer<String> {
 
     public void runIndexSyncJob() {
         service.rebuild();
+        try {
+            sender.sendSynSignal(SynSignal.SYN_DONE.name());
+        } catch (KeeperException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
