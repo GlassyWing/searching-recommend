@@ -2,9 +2,10 @@ package org.manlier.srapp;
 
 import org.manlier.srapp.config.SolrProperties;
 import org.manlier.srapp.constraints.StorageDirs;
+import org.manlier.srapp.dict.DictStateSynService;
+import org.manlier.srapp.dict.DictSynProperties;
 import org.manlier.srapp.history.HistoryKafkaProperties;
 import org.manlier.srapp.history.HistoryService;
-import org.manlier.srapp.index.RebuildIndexService;
 import org.manlier.srapp.prediction.PredictionService;
 import org.manlier.srapp.storage.StorageProperties;
 import org.manlier.srapp.storage.StorageService;
@@ -23,6 +24,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties({StorageProperties.class
         , SolrProperties.class
         , HistoryKafkaProperties.class
+        , DictSynProperties.class
 })
 public class Application {
 
@@ -33,15 +35,17 @@ public class Application {
     @Bean
     CommandLineRunner init(
             StorageService storageService
-// ,PredictionService predictionService
-// ,HistoryService historyService
-//           , RebuildIndexService indexService
+            , PredictionService predictionService
+            , HistoryService historyService
+            , DictStateSynService dictStateSynService
+            , DictSynProperties dictSynProperties
     ) {
 
         return (args -> {
             storageService.deleteAll(".");
             storageService.init(StorageDirs.names());
-//            indexService.init();
+            dictStateSynService.init(dictSynProperties.getZkHosts()
+                    , dictSynProperties.getZkPath());
 //            predictionService.init();
 //            historyService.init();
         });
