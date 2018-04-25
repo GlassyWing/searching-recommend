@@ -1,7 +1,11 @@
 package org.manlier.srapp.prediction
 
-import java.util
+import java.{lang, util}
+import java.util.concurrent.TimeUnit
 
+import io.reactivex.Observable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 import org.manlier.recommend.LinearItemCFModel
@@ -36,8 +40,13 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
     * 初始化工作
     */
   override def init(): Unit = {
-    storePrediction()
-    clean()
+    Observable.interval(30, TimeUnit.SECONDS)
+      .subscribeOn(Schedulers.computation())
+      .subscribe(new Consumer[lang.Long] {
+        override def accept(t: lang.Long): Unit = {
+          storePrediction(makePrediction())
+        }
+      })
   }
 
 
@@ -55,17 +64,13 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
     history = None
   }
 
-  def storePrediction(): Unit = {
-    storePrediction(makePrediction())
-  }
-
   /**
     * 将预测存储到数据库
     *
     * @param prediction 预测
     */
   @Transactional
-  private def storePrediction(prediction: DataFrame): Unit = {
+  def storePrediction(prediction: DataFrame): Unit = {
     prediction.saveToPhoenix(HBasePredictionSchema.TABLE_NAME, conf = hbaseConfig)
   }
 
@@ -77,7 +82,11 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
   def makePrediction(): DataFrame = {
     val userSet = getHistory.select("userId", "COMPID")
       .map(row => UserCompPair(row.getInt(0), row.getInt(1)))
-    val prediction = itemCFModel.fit(getHistory).recommendForUser(userSet, MAX_RECOMMEND_COMP_NUM).coalesce(parallelism).cache()
+    val prediction = itemCFModel
+      .fit(getHistory)
+      .recommendForUser(userSet, MAX_RECOMMEND_COMP_NUM)
+      .coalesce(parallelism)
+      .cache()
     prediction.createOrReplaceTempView("prediction")
     getUsers.createOrReplaceTempView("users")
     getComponents.createOrReplaceTempView("components")
@@ -85,14 +94,14 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
       """
         | SELECT b.uuid as USERNAME, a.COMPNAME as COMPNAME, a.FOLLOWCOMPNAME as FOLLOWCOMPNAME, prediction
         | FROM
-        | (SELECT userId, COMPNAME, b.NAME as FOLLOWCOMPNAME, prediction
-        | FROM
-        | (SELECT a.userId as userId, b.NAME as COMPNAME, a.followCompId as followCompId, prediction
-        | FROM prediction a
-        | JOIN components b on a.compId = b.ID
-        | ) a
-        | JOIN components b on a.followCompId = b.ID) a
-        | JOIN users b
+        |  (SELECT userId, COMPNAME, b.NAME as FOLLOWCOMPNAME, prediction
+        |   FROM
+        |    (SELECT a.userId as userId, b.NAME as COMPNAME, a.followCompId as followCompId, prediction
+        |      FROM prediction a
+        |      JOIN components b on a.compId = b.ID
+        |    ) a
+        |    JOIN components b on a.followCompId = b.ID) a
+        |  JOIN users b
         | ON a.userId = b.id
       """.stripMargin)
     predict.coalesce(parallelism)
@@ -179,13 +188,14 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
       val his = spark.sql(
         """
           | SELECT b.id as userId, a.COMPID as COMPID, a.FOLLOWCOMPID as FOLLOWCOMPID, FREQ
-          | FROM (SELECT USERNAME, COMPID, b.ID as FOLLOWCOMPID, FREQ
           | FROM
-          | (SELECT a.userName as userName, b.id as compId, a.followCompName as followCompName, freq
-          | FROM history a
-          | JOIN components b on a.compName = b.name
-          | ) a
-          | JOIN components b on a.followCompName = b.name) a
+          |   (SELECT USERNAME, COMPID, b.ID as FOLLOWCOMPID, FREQ
+          |    FROM
+          |     (SELECT a.userName as userName, b.id as compId, a.followCompName as followCompName, freq
+          |      FROM history a
+          |      JOIN components b on a.compName = b.name
+          |     ) a
+          |    JOIN components b on a.followCompName = b.name) a
           | JOIN users b
           | ON a.userName = b.uuid
         """.stripMargin)

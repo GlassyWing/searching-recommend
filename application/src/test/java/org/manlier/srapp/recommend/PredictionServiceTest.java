@@ -23,6 +23,6 @@ public class PredictionServiceTest {
 
     @Test
     public void testStorePrediction() {
-        predictionService.storePrediction();
+        predictionService.storePrediction(predictionService.makePrediction());
     }
 }

@@ -7,7 +7,7 @@ trait PredictionService {
 
   def makePrediction(): DataFrame
 
-  def storePrediction(): Unit
+  def storePrediction(prediction: DataFrame): Unit
 
   def getPrediction(userName: String, compName: String, num: Int): java.util.List[Prediction]
 
