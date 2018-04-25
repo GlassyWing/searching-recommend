@@ -65,8 +65,8 @@ public class ComponentServiceImpl extends AbstractFileImporter<Component> implem
 
     @Override
     public List<Component> searchComps(String desc, int rows) {
-        SolrQuery query = new SolrQuery(desc);
-        query.addField("ID");
+        SolrQuery query = new SolrQuery("describe:" + desc);
+        query.addField("id");
         query.addField("describe");
         query.setRows(rows);
         QueryResponse response;
@@ -77,7 +77,7 @@ public class ComponentServiceImpl extends AbstractFileImporter<Component> implem
         }
         SolrDocumentList documents = response.getResults();
         return documents.stream()
-                .map(doc -> new Component((String) doc.get("ID"), (String) doc.get("describe")))
+                .map(doc -> new Component((String) doc.get("id"), (String) doc.get("describe")))
                 .collect(Collectors.toList());
     }
 
