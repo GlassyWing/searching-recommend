@@ -1,12 +1,17 @@
 package org.manlier.srapp.segment;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import org.manlier.analysis.jieba.JiebaSegmenter;
 import org.manlier.analysis.jieba.Pair;
 import org.manlier.analysis.jieba.WordDictionary;
 import org.manlier.analysis.jieba.dao.DictSource;
 import org.manlier.srapp.dao.JiebaDictDAO;
 import org.manlier.srapp.dict.DictLoadException;
+import org.manlier.srapp.dict.DictStateSynService;
 import org.manlier.srapp.domain.Word;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
-public class JiebaSegmentService implements SegmentService {
+public class JiebaSegmentService implements SegmentService,DisposableBean {
 
     private DictSource dictSource;
 
@@ -24,14 +30,22 @@ public class JiebaSegmentService implements SegmentService {
 
     private JiebaSegmenter segmenter;
 
-    private JiebaDictChangeSensor sensor;
+    private PublishSubject<Optional> synSignalPublisher;
+    private Disposable disposableForSyn;
+
 
     @Autowired
     public JiebaSegmentService(DictSource dictSource
-            , JiebaDictDAO dictDAO) {
+            , JiebaDictDAO dictDAO
+            , DictStateSynService synService
+    ) {
         this.dictSource = dictSource;
-        this.sensor = new JiebaDictChangeSensor(this);
         this.dictDAO = dictDAO;
+        this.synSignalPublisher = PublishSubject.create();
+        disposableForSyn = this.synSignalPublisher
+                .debounce(5, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .subscribe(signal -> synService.requestSync());
         init();
     }
 
@@ -43,7 +57,10 @@ public class JiebaSegmentService implements SegmentService {
             throw new DictLoadException("Fail to load user dict", e);
         }
         segmenter = new JiebaSegmenter();
-        segmenter.subscribe(sensor);
+        segmenter.subscribe(pairs -> {
+            updateDictDB(pairs);
+            synSignalPublisher.onNext(Optional.empty());
+        });
 
     }
 
@@ -88,5 +105,10 @@ public class JiebaSegmentService implements SegmentService {
     private Pair<String> suggestFreq(boolean tune, String word) {
         long freq = segmenter.suggestFreq(tune, word);
         return new Pair<>(word, freq);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        disposableForSyn.dispose();
     }
 }
