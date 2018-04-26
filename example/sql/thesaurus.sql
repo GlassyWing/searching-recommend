@@ -9,9 +9,8 @@ CREATE TABLE thesaurus_group (
 ) SALT_BUCKETS=3;
 
 CREATE TABLE thesaurus_belong (
-  word VARCHAR NOT NULL
-  , groupId INTEGER NOT NULL
-  CONSTRAINT pk PRIMARY KEY (word, groupId)
+  word VARCHAR PRIMARY KEY
+  , groupId INTEGER
 ) SALT_BUCKETS=3;
 
 CREATE INDEX thsrs_bl_idx ON thesaurus_belong(groupId);

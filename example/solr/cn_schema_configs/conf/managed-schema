@@ -115,7 +115,7 @@
     <field name="_version_" type="plong" indexed="false" stored="false"/>
     <field name="_root_" type="string" indexed="true" stored="false" docValues="false" />
     <field name="_text_" type="text_general" indexed="true" stored="false" multiValued="true"/>
-    <field name="describe" type="text_cn" indexed="true" stored="false" multiValued="true"/>
+    <field name="describe" type="text_cn" indexed="true" stored="true" multiValued="false"/>
 
     <!-- This can be enabled, in case the client does not know what fields may be searched. It isn't enabled by default
          because it's very expensive to index everything twice. -->
@@ -296,34 +296,34 @@
         <tokenizer class="org.manlier.analysis.jieba.JiebaTokenizerFactory"
           useDefaultDict="false"
           HMM="false"
-          jdbcUrl="jdbc:phoenix:localhost:2181"
-          synZKQuorum="localhost:2181"
+          jdbcUrl="jdbc:phoenix:node2.hdp:2181"
+          synZKQuorum="node2.hdp:2181"
           synZKPath="/test" />
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
         <filter class="org.manlier.analysis.filters.SynonymGraphFilterFactory" 
           synonyms="synonyms.txt"
           expand="true"
-          jdbcUrl="jdbc:phoenix:localhost:2181"
-          tableName="THESAURUS_GROUP" 
-          synZKQuorum="localhost:2181"
-          synZKPath="/test"/>
+          jdbcUrl="jdbc:phoenix:node2.hdp:2181"
+          tableName="THESAURUS_GROUP"
+          synZKQuorum="node2.hdp:2181"
+          synZKPath="/test" />
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="org.manlier.analysis.jieba.JiebaTokenizerFactory"
           useDefaultDict="false"
           HMM="false"
-          jdbcUrl="jdbc:phoenix:localhost:2181"
-          synZKQuorum="localhost:2181"
+          jdbcUrl="jdbc:phoenix:node2.hdp:2181"
+          synZKQuorum="node2.hdp:2181"
           synZKPath="/test" />
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
         <filter class="org.manlier.analysis.filters.SynonymGraphFilterFactory" 
           synonyms="synonyms.txt"
           expand="true"
-          jdbcUrl="jdbc:phoenix:localhost:2181"
-          tableName="THESAURUS_GROUP" 
-          synZKQuorum="localhost:2181"
-          synZKPath="/test"/>
+          jdbcUrl="jdbc:phoenix:node2.hdp:2181"
+          tableName="THESAURUS_GROUP"
+          synZKQuorum="node2.hdp:2181"
+          synZKPath="/test" />
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
