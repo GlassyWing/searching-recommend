@@ -39,4 +39,3 @@ mybatis:
   type-aliases-package: org.manlier.srapp.domain
 server:
   port: 9090
-debug: true
