@@ -4,7 +4,11 @@
 
 ## 简介
 
-> 定义构件：一些可完成特定功能的代码片段和接口，包含构件名称和构件描述等属性，以图形化作为表现形式流程：构件以线性关系进行组合后的以期望能完成更复杂功能的执行过程，以图形化作为表现形式
+> 定义
+
+构件：一些可完成特定功能的代码片段和接口，包含构件名称和构件描述等属性，以图形化作为表现形式
+
+流程：构件以线性关系进行组合后的以期望能完成更复杂功能的执行过程，以图形化作为表现形式
 
 本项目依托于 Hadoop 大数据环境（包括 HDFS、HBase、Phoenix、Spark、Kafka、Zookeeper、Yarn），借助 Solr 框架集成 jieba 分词作为搜索引擎，实现通过同义词进行构件检索。利用 Spark ML 编写基于物品的协同过滤算法实现构件推荐。
 
@@ -12,7 +16,7 @@
 
 ### Hadoop 环境搭建
 
-hadoop 环境借助 Ambari 进行搭建，Ambari 的安装教程见
+需要安装以下 hadoop 环境，推荐借助 Ambari 进行搭建，Ambari 的安装教程见
 
 [ambari 2.6.x 本地仓库搭建和离线安装]: https://glassywing.github.io/2018/04/01/blog-02/
 
@@ -38,9 +42,9 @@ hadoop 环境借助 Ambari 进行搭建，Ambari 的安装教程见
 
 在依赖包完成安装后，下载该项目，若你使用 Idea 开发工具，将会自动进行 maven 依赖库的安装。
 
-## 配置安装说明
+## 部署说明
 
-### 数据库配置
+### 数据库部署
 
 本项目使用 HBase 作为数据库，并借助 Phoenix 进行 SQL 操作，数据库按照业务逻辑分为三部分
 
@@ -48,10 +52,19 @@ hadoop 环境借助 Ambari 进行搭建，Ambari 的安装教程见
 * 用户使用历史数据库
 * 词库（分词库、同义词库）
 
-数据库定义文件位于`example/sql`目录下，可通过`pysql.sh xxx.sql`执行 SQL 文件。字典文件位于`example/dict`目录下，通过`psql.py -t tableName localhost xxx.csv`指令进行导入。
+数据库定义文件位于`example/sql`目录下。字典文件位于`example/data`目录下。
 
-**追加**：可通过`application\src\main\scala\org\manlier\srapp\utils`下的`GenerateDataToHBase.scala`生成模拟用户和模拟用户历史记录数据。  
-**该操作需要构件表不为空**。
+通过以下指令创建数据表并导入示例数据
+
+```shell
+psql.py jieba_dict.sql  recommend.sql  thesaurus.sql
+psql.py -t JIEBA_DICT jieba_dict.csv
+psql.py -t JIEBA_DICT jieba_dict.csv
+psql.py -t THESAURUS_BELONG thesaurus_belong.csv
+psql.py -t USERS users.csv
+psql.py -t COMPONENTS components.csv
+psql.py -t HISTORY history.csv
+```
 
 ### solr 配置
 
@@ -70,9 +83,10 @@ bin/solr create -force -c compCollection \
 
 ### hbase-indexer 配置
 
-1.  启动 hbase-indexer 服务
-2.  将`example/hbase-indexer/morphlines.conf`复制到`/conf`目录下，没有则创建
-3.  创建索引
+1.  将`hbase-indexer-phoenix-mapper-1.0.0.jar`和`phoenix-core-4.13.1-HBase-1.2.jar`复制到`${HBASE_INDEXER_HOME}\lib`目录下
+2.  启动 hbase-indexer 服务
+3.  将`example/hbase-indexer/morphlines.conf`复制到`/conf`目录下，没有则创建
+4.  创建索引
 
 ```shell
 hbase-indexer add-indexer -n compsindexer \
