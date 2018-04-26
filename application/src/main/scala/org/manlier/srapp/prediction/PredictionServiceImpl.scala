@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.apache.phoenix.spark._
 import org.manlier.srapp.dao.PredictionDAO
 import org.manlier.srapp.domain.Prediction
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,6 +26,7 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
                             , @Autowired val predictionDAO: PredictionDAO)
   extends PredictionService with Serializable {
 
+  private val logger: Logger = LoggerFactory.getLogger(getClass.getName)
 
   import spark.implicits._
 
@@ -44,8 +46,10 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
       .subscribeOn(Schedulers.computation())
       .subscribe(new Consumer[lang.Long] {
         override def accept(t: lang.Long): Unit = {
+          println("Try to make prediction and save.")
           storePrediction(makePrediction())
           clean()
+          println("Prediction has made and saved.")
         }
       })
   }
