@@ -33,7 +33,9 @@ object GenerateDataToHBase {
     val history = TestDataGenerator.generateHistoryWithName(numHistory, maxCount, users, compTuples)
     (users.toDF("ID", "UUID")
       , compsTable
-      , history.toDF("USERNAME", "COMPNAME", "FOLLOWCOMPNAME", "FREQ"))
+      , history
+      .map(record => (record.user, record.comp, record.followComp, record.count.toInt))
+      .toDF("USERNAME", "COMPNAME", "FOLLOWCOMPNAME", "FREQ"))
   }
 
 
@@ -47,11 +49,13 @@ object GenerateDataToHBase {
 
   def saveToHBase(tables: (DataFrame, DataFrame, DataFrame)): Unit = {
     val conf = HBaseConfiguration.create()
+//    tables._1.toDF("ID", "UUID")
+//      .saveToPhoenix(HBaseUsersSchema.TABLE_NAME, conf = conf)
+//    tables._3.toDF("USERNAME", "COMPNAME", "FOLLOWCOMPNAME", "FREQ")
+//      .saveToPhoenix(HBaseHistorySchema.TABLE_NAME, conf = conf)
     tables._1.toDF("ID", "UUID")
-      .saveToPhoenix(HBaseUsersSchema.TABLE_NAME, conf = conf)
-//    tables._2.toDF("ID", "NAME")
-//      .saveToPhoenix(HBaseComponentSchema.TABLE_NAME, conf = conf)
+      .coalesce(1).write.csv("/example/users")
     tables._3.toDF("USERNAME", "COMPNAME", "FOLLOWCOMPNAME", "FREQ")
-      .saveToPhoenix(HBaseHistorySchema.TABLE_NAME, conf = conf)
+      .coalesce(1).write.csv("/example/history")
   }
 }
