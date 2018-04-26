@@ -4,9 +4,11 @@ import org.apache.hadoop.fs.Path;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class RawTest {
 
+    private Pattern pattern = Pattern.compile("\\w+,\\w+\\.\\w+,\\w+\\.\\w+");
 
     @Test
     public void testPath() {
