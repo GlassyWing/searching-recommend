@@ -1,15 +1,19 @@
 <configuration>
     <property>
+        <name>hbase.rootdir</name>
+        <value>hdfs://node2.hdp:9000/hbase</value>
+    </property>
+    <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>localhost</value>
+        <value>node2.hdp,node3.hdp</value>
     </property>
     <property>
-        <name>hbase.zookeeper.property.clientPort</name>
-        <value>2181</value>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/hadoop/zk</value>
     </property>
     <property>
-        <name>zookeeper.znode.parent</name>
-        <value>/hbase</value>
+        <name>hbase.cluster.distributed</name>
+        <value>true</value>
     </property>
     <!-- 允许使用命名空间 -->
     <property>
