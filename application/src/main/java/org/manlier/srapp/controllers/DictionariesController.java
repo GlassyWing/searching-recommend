@@ -53,9 +53,10 @@ public class DictionariesController {
      * 分词服务
      *
      * @param sentence 语句
-     * @param action   动作：共2种
+     * @param action   动作：共3种
      *                 1.  "cut": 分词
      *                 2.  "tune"  调整字典
+     *                 3.   "suggest"   只建议，不调整字典
      * @return 响应
      */
     @PostMapping("/api/v1/segment")

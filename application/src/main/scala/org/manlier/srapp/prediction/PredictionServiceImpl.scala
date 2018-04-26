@@ -45,6 +45,7 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
       .subscribe(new Consumer[lang.Long] {
         override def accept(t: lang.Long): Unit = {
           storePrediction(makePrediction())
+          clean()
         }
       })
   }

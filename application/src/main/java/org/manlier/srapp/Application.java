@@ -46,8 +46,8 @@ public class Application {
             storageService.init(StorageDirs.names());
             dictStateSynService.init(dictSynProperties.getZkHosts()
                     , dictSynProperties.getZkPath());
-//            predictionService.init();
-//            historyService.init();
+            predictionService.init();
+            historyService.init();
         });
     }
 
