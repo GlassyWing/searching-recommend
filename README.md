@@ -34,14 +34,26 @@
 
 ### 项目maven依赖
 
-本项目以 maven 作为依赖管理工具，特别的，你需要首先离线安装以下依赖包（这些库不存在于公共仓库，请下载安装，安装教程见各工具说明）,
+本项目以 maven 作为依赖管理工具，特别的，你需要首先安装或打包以下依赖包（这些库不存在于公共仓库，请下载安装，安装教程见各工具说明）,
 
 * [better-jieba](https://github.com/GlassyWing/better-jieba)
+
+下载完成后使用`mvn install -DskipTests`安装
+
 * [better-jieba-solr](https://github.com/GlassyWing/better-jieba-solr)
+
+下载完成后使用`mvn package -DskipTests`得到better-jieba-solr-xxx.jar
+
 * [components-recommend](https://github.com/GlassyWing/components-recommend)
+
+下载完成后使用`mvn install -DskipTests`安装
+
 * [hbase-indexer-phoenix-mapper](https://github.com/GlassyWing/hbase-indexer-phoenix-mapper)
 
-在依赖包完成安装后，下载该项目，若你使用 Idea 开发工具，将会自动进行 maven 依赖库的安装。
+下载完成后使用`mvn package -DskipTests`得到hbase-indexer-phoenix-mapper-xxx.jar
+
+
+在依赖包完成安装或打包后，下载该项目，若你使用 Idea 开发工具，将会自动进行 maven 依赖库的安装。
 
 ## 部署说明
 
