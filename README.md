@@ -32,12 +32,13 @@
 * Solr
 * hbase-indexer
 
-### 项目依赖
+### 项目maven依赖
 
-本项目以 maven 作为依赖管理工具，你需要首先离线安装以下依赖包（这些库不存在于公共仓库，请下载安装，安装教程见链接）,
+本项目以 maven 作为依赖管理工具，特别的，你需要首先离线安装以下依赖包（这些库不存在于公共仓库，请下载安装，安装教程见各工具说明）,
 
 * [better-jieba](https://github.com/GlassyWing/better-jieba)
 * [better-jieba-solr](https://github.com/GlassyWing/better-jieba-solr)
+* [components-recommend](https://github.com/GlassyWing/components-recommend)
 * [hbase-indexer-phoenix-mapper](https://github.com/GlassyWing/hbase-indexer-phoenix-mapper)
 
 在依赖包完成安装后，下载该项目，若你使用 Idea 开发工具，将会自动进行 maven 依赖库的安装。
