@@ -22,14 +22,14 @@
 
 需要安装的 Hadoop 环境有如下几项，安装教程见各工具官方文档：
 
-* HDFS
-* MapReduce2
-* YARN
-* HBase
-* Spark
-* Phoenix
-* Zookeeper
-* Solr
+* HDFS 2.7.0 +
+* MapReduce2 2.7.0 +
+* YARN 2.7.0 +
+* HBase 1.2.x
+* Spark 2.3.0
+* Phoenix   4.13.0
+* Zookeeper 3.4.0 +
+* Solr  7.0 +
 * hbase-indexer
 
 ### 项目maven依赖
