@@ -65,7 +65,7 @@
 * 用户使用历史数据库
 * 词库（分词库、同义词库）
 
-数据库定义文件位于`example/sql`目录下。字典文件位于`example/data`目录下。
+数据库定义文件位于`example/sql`目录下。数据文件位于`example/data`目录下。
 
 通过以下指令创建数据表并导入示例数据
 
@@ -82,7 +82,7 @@ psql.py -t HISTORY history.csv
 ### solr 配置
 
 1.  将位于`example/solr`目录下的`cn_schema_configs`复制到`${SOLR_HOME}/server/solr/configsets`目录下
-2.  并将`better-jieba-solr-1.0-SNAPSHOT.jar`、`phoenix-4.13.1-HBase-1.2-client.jar`复制到`${SOLR_HOME}/server/solr-webapp/WEB-INF/lib/`目录下并替换`protobuf-java-3.1.0.jar`为`protobuf-java-2.5.0.jar`
+2.  并将`better-jieba-solr-1.0-SNAPSHOT.jar`、`phoenix-4.13.1-HBase-1.2-client.jar（位于phoenix安装目录下）`复制到`${SOLR_HOME}/server/solr-webapp/WEB-INF/lib/`目录下并替换`protobuf-java-3.1.0.jar`为`protobuf-java-2.5.0.jar`
 3.  启动 solr 服务
 4.  创建集合`compCollection`并指定配置集
 
@@ -96,7 +96,7 @@ bin/solr create -force -c compCollection \
 
 ### hbase-indexer 配置
 
-1.  将`hbase-indexer-phoenix-mapper-1.0.0.jar`和`phoenix-core-4.13.1-HBase-1.2.jar`复制到`${HBASE_INDEXER_HOME}\lib`目录下
+1.  将`hbase-indexer-phoenix-mapper-1.0.0.jar`和`phoenix-core-4.13.1-HBase-1.2.jar（位于phoenix安装目录下）`复制到`${HBASE_INDEXER_HOME}\lib`目录下
 2.  启动 hbase-indexer 服务
 3.  将`example/hbase-indexer/morphlines.conf`复制到`/conf`目录下，没有则创建
 4.  创建索引
