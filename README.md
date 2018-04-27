@@ -83,16 +83,27 @@ psql.py -t HISTORY history.csv
 
 1.  将位于`example/solr`目录下的`cn_schema_configs`复制到`${SOLR_HOME}/server/solr/configsets`目录下
 2.  并将`better-jieba-solr-1.0-SNAPSHOT.jar`、`phoenix-4.13.1-HBase-1.2-client.jar（位于phoenix安装目录下）`复制到`${SOLR_HOME}/server/solr-webapp/WEB-INF/lib/`目录下并替换`protobuf-java-3.1.0.jar`为`protobuf-java-2.5.0.jar`
-3.  启动 solr 服务
-4.  创建集合`compCollection`并指定配置集
+3.  创建solr的zookeeper根路径
 
-```shell
-bin/solr create -force -c compCollection \
--n compCollConfigs \
--s 1 \
--rf 1 \
--d cn_schema_configs
-```
+    ```shell
+    bin/solr zk mkroot /solr -z localhost:2181
+    ```
+
+4.  启动 solr 服务
+
+    ```shell
+     bin/solr start -force -c -z localhost:2181/solr
+    ```
+
+5.  创建集合`compsCollection`并指定配置集
+
+    ```shell
+    bin/solr create -force -c compsCollection \
+    -n compsCollConfigs \
+    -s 1 \
+    -rf 1 \
+    -d cn_schema_configs
+    ```
 
 ### hbase-indexer 配置
 
@@ -143,5 +154,5 @@ solr:
   address: http://node2.hdp:8983/solr
   connectionTimeout: 10000
   socketTimeout: 60000
-  collectionName: compCollection
+  collectionName: compsCollection
 ```
