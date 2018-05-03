@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:8080"})
 public class RecommendController {
 
     private RecommendService service;

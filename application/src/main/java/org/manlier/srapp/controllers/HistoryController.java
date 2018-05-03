@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = {"localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:8080"})
 public class HistoryController {
 
     private HistoryService historyService;

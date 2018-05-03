@@ -33,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = {"localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:8080"})
 public class DictionariesController {
 
     private SegmentService segmentService;
