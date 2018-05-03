@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.manlier.srapp.dao.HistoryDAO">
+
+    <select id="getNumOfUsers" resultType="NumOfUsers">
+        SELECT compName, followCompName, count(*) as quantity
+        FROM (SELECT compName, followCompName FROM history WHERE compName= #{compName})
+        GROUP BY compName, followCompName
+        ORDER BY quantity DESC
+    </select>
+
+    <select id="getHistoryForUser" resultType="HistoryRecord">
+        SELECT * FROM history WHERE userName=#{uuid} AND compName=#{compName}
+        ORDER BY freq DESC
+    </select>
+
+    <select id="getTotalFreq" resultType="TotalFreq">
+        SELECT compName, followCompName, SUM(freq) AS totalFreq
+        FROM (SELECT compName, followCompName, freq FROM history WHERE compName= #{compName})
+        GROUP BY compName, followCompName
+        ORDER BY totalFreq DESC
+    </select>
+
+</mapper>
