@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import static org.manlier.srapp.constraints.Limits.*;
 
 @RestController
+@CrossOrigin(origins = {"localhost:8080"})
 public class ComponentsController {
 
     private ComponentService service;

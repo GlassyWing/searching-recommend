@@ -7,6 +7,7 @@ import org.manlier.srapp.history.HistoryFormatException;
 import org.manlier.srapp.history.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 
 @RestController
+@CrossOrigin(origins = {"localhost:8080"})
 public class HistoryController {
 
     private HistoryService historyService;
