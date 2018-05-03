@@ -40,17 +40,20 @@ class HistoryServiceImpl(@Autowired val sparkSession: SparkSession
     */
   def getHistoryRecordStream: DStream[(String, String, String, Long)] = {
     ssc.checkpoint(properties.getCheckpointDir)
+    // Spark Streaming 对接Kafka
     KafkaUtils.createDirectStream(ssc
       , LocationStrategies.PreferConsistent
       , ConsumerStrategies.Subscribe[String, String](properties.getTopics, properties.getKafkaParamsConsumer))
       .map(_.value())
       .filter(HistoryRecordFormatUtil.isValidate)
       .map(x => (x, 1L))
+      // 窗口时间设定为4s，并统计这段时间内用户使用构件的次数
       .reduceByKeyAndWindow(_ + _, _ - _, Seconds(4), Seconds(4), 2)
       .map(kv => {
         val parts = kv._1.split(",")
         (parts(0), parts(1), parts(2), kv._2)
       })
+      //  过滤掉不必要的记录，减少数据库连接
       .filter(tuple => tuple._4 != 0)
   }
 

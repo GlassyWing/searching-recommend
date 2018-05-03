@@ -18,12 +18,12 @@ public interface ComponentService extends FileImporter {
     Optional<Component> searchComp(String name);
 
     /**
-     * 通过构件id搜索构件
+     * 通过构件名搜索构件
      *
-     * @param id 构件id
+     * @param name 构件名
      * @return 构件
      */
-    Optional<Component> searchComp(int id);
+    Optional<Component> searchComp(int name);
 
     /**
      * 通过构件描述搜索构件
@@ -43,11 +43,11 @@ public interface ComponentService extends FileImporter {
     Component updateComp(Component component);
 
     /**
-     * 根据构件id删除构件
+     * 根据构件name删除构件
      *
-     * @param id 构件id
+     * @param name 构件名
      */
-    void deleteComp(String id);
+    void deleteComp(String name);
 
     /**
      * 添加一个构件
