@@ -11,8 +11,8 @@
     <modules>
         <module>starter</module>
         <module>sr-meta</module>
-        <module>application</module>
         <module>common</module>
+        <module>application</module>
     </modules>
 
 
