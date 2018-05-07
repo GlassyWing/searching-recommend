@@ -42,7 +42,7 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
     * 初始化工作
     */
   override def init(): Unit = {
-    Observable.interval(30, TimeUnit.SECONDS)
+    Observable.interval(3, TimeUnit.MINUTES)
       .subscribeOn(Schedulers.computation())
       .subscribe(new Consumer[lang.Long] {
         override def accept(t: lang.Long): Unit = {
