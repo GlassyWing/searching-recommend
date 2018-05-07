@@ -17,7 +17,7 @@ public class SynonymsRecordParser {
     private boolean recordValid = false;
 
     @SuppressWarnings("unchecked")
-    public void parse(String value) throws IOException {
+    public void parse(String value) {
 
 
         try {
