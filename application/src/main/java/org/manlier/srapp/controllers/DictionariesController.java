@@ -33,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:8080"})
+@CrossOrigin(origins = "*")
 public class DictionariesController {
 
     private SegmentService segmentService;
@@ -96,13 +96,13 @@ public class DictionariesController {
     /**
      * 获得分词库中具体某个单词的信息
      *
-     * @param name 单词
+     * @param word 单词
      * @return 响应
      */
-    @GetMapping("api/v1/segment/word")
-    public ResponseEntity<Result> getWord(@Param("name") String name) {
-        Optional<Word> quantum = segmentService.searchWord(name);
-        return quantum.<ResponseEntity<Result>>map(word -> ResponseEntity.ok(new DictQueryResult(Collections.singletonList(word))))
+    @GetMapping("/api/v1/segment/{word}")
+    public ResponseEntity<Result> getWord(@PathVariable("word") String word) {
+        Optional<Word> quantum = segmentService.searchWord(word);
+        return quantum.<ResponseEntity<Result>>map(word1 -> ResponseEntity.ok(new DictQueryResult(Collections.singletonList(word1))))
                 .orElseGet(() -> ResponseEntity.ok(new DictQueryResult(Collections.emptyList())));
     }
 
