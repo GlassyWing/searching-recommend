@@ -13,11 +13,13 @@ import org.manlier.srapp.dto.result.dict.DictQueryResult;
 import org.manlier.srapp.dto.result.segment.SegmentResult;
 import org.manlier.srapp.dto.result.segment.TuneResult;
 import org.manlier.srapp.dto.result.storage.FilesQueryResult;
+import org.manlier.srapp.dto.result.thesaurus.SynonymsGroupQueryResult;
 import org.manlier.srapp.dto.result.thesaurus.SynonymsQueryResult;
 import org.manlier.srapp.dto.result.thesaurus.WordQueryResult;
 import org.manlier.srapp.segment.SegmentException;
 import org.manlier.srapp.segment.SegmentService;
 import org.manlier.srapp.storage.StorageService;
+import org.manlier.srapp.thesaurus.SynonymsConvertor;
 import org.manlier.srapp.thesaurus.ThesaurusFormatException;
 import org.manlier.srapp.thesaurus.ThesaurusService;
 import org.springframework.http.HttpStatus;
@@ -106,23 +108,22 @@ public class DictionariesController {
                 .orElseGet(() -> ResponseEntity.ok(new DictQueryResult(Collections.emptyList())));
     }
 
+    /*=================================同义词字典============================*/
+
     /**
-     * 获得指定单词的同义词
+     * 获得指定单词的所有同义词组
      *
      * @param word 单词
      * @return 响应
      */
-    @GetMapping("/api/v1/thesaurus")
-    public SynonymsGroup getSynonyms(@RequestParam("word") String word) {
-        SynonymsGroup synonymsGroup = thesaurusService.searchSynonyms(word);
-        if (synonymsGroup != null) {
-            return synonymsGroup;
-        }
-        return null;
+    @GetMapping("/api/v1/thesaurus/{word}")
+    public ResponseEntity<Result> getSynonymGroups(@PathVariable("word") String word) {
+        List<SynonymsGroup> synonymsGroup = thesaurusService.searchSynonyms(word);
+        return ResponseEntity.ok(new SynonymsGroupQueryResult(synonymsGroup));
     }
 
     /**
-     * 添加一组同义词，如果词库中已经有同义词，将会把这组同义词与原有的同义词进行合并
+     * 添加新的一组同义词
      *
      * @param synonyms 同义词组
      * @return 响应
@@ -139,23 +140,10 @@ public class DictionariesController {
      * @param groupId 同义词组ID
      * @return 响应
      */
-    @DeleteMapping("/api/v1/thesaurus")
-    public ResponseEntity deleteSynonymsGroup(@RequestParam("groupId") int groupId) {
+    @DeleteMapping("/api/v1/thesaurus/{groupId}")
+    public ResponseEntity deleteSynonymsGroup(@PathVariable("groupId") int groupId) {
         thesaurusService.deleteSynonymsGroup(groupId);
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 添加一个单词到同义词组
-     *
-     * @param word    单词
-     * @param groupId 同义词组ID
-     * @return 响应
-     */
-    @PostMapping("/api/v1/thesaurus/word")
-    public ResponseEntity<Result> addWordToSynonymsGroup(@RequestParam("word") String word, @RequestParam("groupId") int groupId) {
-        thesaurusService.addWordToSynonymsGroup(word, groupId);
-        return ResponseEntity.ok(new WordQueryResult(Collections.singletonList(word)));
     }
 
     /**
@@ -165,10 +153,23 @@ public class DictionariesController {
      * @param groupId 词组ID
      * @return 响应
      */
-    @DeleteMapping("/api/v1/thesaurus/word")
-    public ResponseEntity deleteWordFromSynonymsGroup(@RequestParam("word") String word, @RequestParam("groupId") int groupId) {
+    @DeleteMapping("/api/v1/thesaurus/synonyms")
+    public ResponseEntity deleteWordFromSynonymsGroup(@RequestParam("word") String word
+            , @RequestParam("groupId") int groupId) {
         thesaurusService.deleteWordFromSynonymsGroup(word, groupId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 添加一组词到已有的同义词组中
+     *
+     * @param words 词组
+     * @return 响应
+     */
+    @PostMapping("/api/v1/thesaurus/synonyms")
+    public ResponseEntity<Result> addWordsToGroup(@RequestParam("words") String words, @RequestParam("groupId") int groupId) {
+        thesaurusService.addWordsToSynonymsGroup(SynonymsConvertor.parseToSet(words), groupId);
+        return ResponseEntity.ok(new SynonymsQueryResult(Collections.singletonList(words)));
     }
 
 

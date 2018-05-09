@@ -9,18 +9,22 @@
     <sql id="THESAURUS_BELONG">thesaurus_belong</sql>
     <sql id="THESAURUS_SEQUENCE">thesaurus_seq</sql>
 
-    <select id="getSynonymsByWord" resultType="String">
-        SELECT synonyms FROM <include refid="THESAURUS_GROUP"/>
-        WHERE groupId =
+    <select id="getSynonymsByWord" resultType="SynonymsGroupStr">
+        SELECT * FROM <include refid="THESAURUS_GROUP"/>
+        WHERE groupId IN
         (SELECT groupId FROM <include refid="THESAURUS_BELONG"/> WHERE word = #{word})
     </select>
 
-    <select id="getSynonymsByGroupId" resultType="String">
-        SELECT synonyms FROM <include refid="THESAURUS_GROUP"/> WHERE groupId = #{groupId}
+    <select id="getSynonymsByGroupId" resultType="SynonymsGroupStr">
+        SELECT * FROM <include refid="THESAURUS_GROUP"/> WHERE groupId = #{groupId}
     </select>
 
-    <select id="getSynonymGroupId" resultType="Integer">
-        SELECT groupId FROM <include refid="THESAURUS_BELONG"/> WHERE word = #{word}
+    <select id="getGroupIdByWord" resultType="Integer">
+        SELECT groupId FROM <include refid="THESAURUS_BELONG"/> WHERE word=#{word}
+    </select>
+
+    <select id="getPagedSynonymsGroups" resultType="SynonymsGroupStr">
+        SELECT * FROM <include refid="THESAURUS_GROUP"/> LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <insert id="addBelong">
@@ -38,7 +42,7 @@
     </insert>
 
     <delete id="deleteBelong">
-        DELETE FROM <include refid="THESAURUS_BELONG"/> WHERE word=#{word}
+        DELETE FROM <include refid="THESAURUS_BELONG"/> WHERE word=#{word} AND groupId=#{groupId}
     </delete>
 
     <delete id="deleteSynonymsGroup">
