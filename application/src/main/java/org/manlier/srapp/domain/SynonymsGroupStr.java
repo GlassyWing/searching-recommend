@@ -1,5 +1,7 @@
 package org.manlier.srapp.domain;
 
+import org.manlier.srapp.thesaurus.SynonymsConvertor;
+
 import java.util.Objects;
 
 public class SynonymsGroupStr {
@@ -30,6 +32,10 @@ public class SynonymsGroupStr {
 
     public void setSynonyms(String synonyms) {
         this.synonyms = synonyms;
+    }
+
+    public SynonymsGroup toSynonymsGroup() {
+        return new SynonymsGroup(groupId, SynonymsConvertor.parseToSet(synonyms));
     }
 
     @Override

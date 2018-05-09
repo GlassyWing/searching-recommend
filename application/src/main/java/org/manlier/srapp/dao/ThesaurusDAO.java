@@ -28,15 +28,24 @@ public interface ThesaurusDAO {
      * @param word 单词
      * @return 每个字符串均为一组同义词，用','相隔
      */
-    List<String> getSynonymsByWord(@Param("word") String word);
+    List<SynonymsGroupStr> getSynonymsByWord(@Param("word") String word);
 
     /**
-     * 获得指定单词所属的所有同义词组的Id
+     * 获得单词所属的同义词组ID
      *
      * @param word 单词
      * @return 同义词组ID
      */
-    Integer getSynonymGroupId(@Param("word") String word);
+    List<Integer> getGroupIdByWord(@Param("word") String word);
+
+    /**
+     * 获得指定数量的同义词组
+     *
+     * @param offset 起始
+     * @param limit  数量限制
+     * @return 同义词组
+     */
+    List<SynonymsGroupStr> getPagedSynonymsGroups(@Param("offset") int offset, @Param("limit") int limit);
 
     /**
      * 通过同义词组id获得一组同义词
@@ -44,7 +53,7 @@ public interface ThesaurusDAO {
      * @param groupId 同义词组 ID
      * @return 同义词组，用','相隔
      */
-    String getSynonymsByGroupId(@Param("groupId") int groupId);
+    SynonymsGroupStr getSynonymsByGroupId(@Param("groupId") int groupId);
 
     /**
      * 添加单词到同义词组的所属关系
@@ -59,7 +68,7 @@ public interface ThesaurusDAO {
      *
      * @param word 单词
      */
-    void deleteBelong(@Param("word") String word);
+    void deleteBelong(@Param("word") String word, @Param("groupId") int groupId);
 
     /**
      * 删除同义词组
