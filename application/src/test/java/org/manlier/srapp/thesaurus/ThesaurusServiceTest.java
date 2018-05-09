@@ -22,22 +22,29 @@ public class ThesaurusServiceTest {
     @Test
     public void addSynonymsGroup() {
         service.addSynonymGroup(new SynonymsGroup(new HashSet<>(Arrays.asList("黎明", "朝阳"))));
+        service.addSynonymGroup(new SynonymsGroup(new HashSet<>(Arrays.asList("黎明", "希望"))));
 //        service.searchSynonyms("黎明").forEach(System.out::println);
     }
 
-
     @Test
-    public void deleteWordFromSynonymsGroup() {
-        service.deleteWordFromSynonymsGroup("朝阳", 0);
+    public void getSynonymsByWord() {
+        service.searchSynonyms("黎明").forEach(System.out::println);
     }
 
     @Test
     public void addWordToSynonymsGroup() {
-        service.addWordToSynonymsGroup("朝阳", 0);
+        service.addWordsToSynonymsGroup(new HashSet<>(Collections.singletonList("朝阳")), 8500);
     }
 
     @Test
-    public void deleteWord() {
-        service.deleteWord("朝阳");
+    public void deleteWordFromSynonymsGroup() {
+        service.deleteWordFromSynonymsGroup("朝阳", 8500);
     }
+
+    @Test
+    public void deleteSynonymsGroup() {
+        service.deleteSynonymsGroup(8500);
+    }
+
+
 }
