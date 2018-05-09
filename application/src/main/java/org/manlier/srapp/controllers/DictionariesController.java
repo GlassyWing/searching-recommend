@@ -111,64 +111,50 @@ public class DictionariesController {
     /*=================================同义词字典============================*/
 
     /**
-     * 获得指定单词的所有同义词组
+     * 获得指定单词的同义词组
      *
      * @param word 单词
      * @return 响应
      */
-    @GetMapping("/api/v1/thesaurus/{word}")
+    @GetMapping("/api/v1/thesaurus/synonyms/{word}")
     public ResponseEntity<Result> getSynonymGroups(@PathVariable("word") String word) {
         List<SynonymsGroup> synonymsGroup = thesaurusService.searchSynonyms(word);
         return ResponseEntity.ok(new SynonymsGroupQueryResult(synonymsGroup));
     }
 
     /**
-     * 添加新的一组同义词
+     * 从同义词组中删除一个单词或删除整个同义词组
      *
-     * @param synonyms 同义词组
-     * @return 响应
-     */
-    @PostMapping("/api/v1/thesaurus")
-    public ResponseEntity<Result> addSynonymsGroup(@RequestParam("synonyms") String synonyms) {
-        thesaurusService.addSynonymGroup(synonyms);
-        return ResponseEntity.ok(new SynonymsQueryResult(Collections.singletonList(synonyms)));
-    }
-
-    /**
-     * 删除一组同义词
-     *
-     * @param groupId 同义词组ID
-     * @return 响应
-     */
-    @DeleteMapping("/api/v1/thesaurus/{groupId}")
-    public ResponseEntity deleteSynonymsGroup(@PathVariable("groupId") int groupId) {
-        thesaurusService.deleteSynonymsGroup(groupId);
-        return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * 从同义词组中删除一个单词
-     *
-     * @param word    单词
+     * @param word    单词，若不指定则删除整个同义词组
      * @param groupId 词组ID
      * @return 响应
      */
     @DeleteMapping("/api/v1/thesaurus/synonyms")
-    public ResponseEntity deleteWordFromSynonymsGroup(@RequestParam("word") String word
-            , @RequestParam("groupId") int groupId) {
-        thesaurusService.deleteWordFromSynonymsGroup(word, groupId);
+    public ResponseEntity deleteWordFromSynonymsGroup(@RequestParam(value = "word", required = false) String word
+            , @RequestParam("groupId") Integer groupId) {
+        if (word == null) {
+            thesaurusService.deleteSynonymsGroup(groupId);
+        } else {
+            thesaurusService.deleteWordFromSynonymsGroup(word, groupId);
+        }
         return ResponseEntity.noContent().build();
     }
 
     /**
      * 添加一组词到已有的同义词组中
      *
-     * @param words 词组
+     * @param words   词组
+     * @param groupId 词组ID，若不指定则新建一组同义词组
      * @return 响应
      */
     @PostMapping("/api/v1/thesaurus/synonyms")
-    public ResponseEntity<Result> addWordsToGroup(@RequestParam("words") String words, @RequestParam("groupId") int groupId) {
-        thesaurusService.addWordsToSynonymsGroup(SynonymsConvertor.parseToSet(words), groupId);
+    public ResponseEntity<Result> addWordsToGroup(@RequestParam("words") String words
+            , @RequestParam(value = "groupId", required = false) Integer groupId) {
+        if (groupId == null) {
+            thesaurusService.addSynonymGroup(words);
+        } else {
+            thesaurusService.addWordsToSynonymsGroup(SynonymsConvertor.parseToSet(words), groupId);
+        }
         return ResponseEntity.ok(new SynonymsQueryResult(Collections.singletonList(words)));
     }
 
