@@ -22,11 +22,11 @@ object ExportThesaurusToCSV {
     sparkSession.sqlContext.phoenixTableAsDataFrame(
       HBaseThesaurusGroupSchema.TABLE_NAME
       , Seq(HBaseThesaurusGroupSchema.GROUPID_QUALIFIER, HBaseThesaurusGroupSchema.SYNONYMS_QUALIFIER)
-      , conf = conf).coalesce(1).write.csv("./resource/dict/thesaurus/group")
+      , conf = conf).coalesce(1).write.csv("./example/dict/thesaurus/group")
     sparkSession.sqlContext.phoenixTableAsDataFrame(
       HBaseThesaurusBelongSchema.TABLE_NAME
       , Seq(HBaseThesaurusBelongSchema.WORD_QUALIFIER, HBaseThesaurusBelongSchema.GROUPID_QUALIFIER)
-      , conf = conf).coalesce(1).write.csv("./resource/dict/thesaurus/belong")
+      , conf = conf).coalesce(1).write.csv("./example/dict/thesaurus/belong")
   }
 
 }
