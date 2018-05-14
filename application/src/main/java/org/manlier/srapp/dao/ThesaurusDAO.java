@@ -38,6 +38,8 @@ public interface ThesaurusDAO {
      */
     List<Integer> getGroupIdByWord(@Param("word") String word);
 
+    List<Integer> getBelongToGroups();
+
     /**
      * 获得指定数量的同义词组
      *
@@ -98,4 +100,28 @@ public interface ThesaurusDAO {
      * @param synonyms 同义词，以英文逗号(,)隔开
      */
     void updateSynonymsGroup(@Param("groupId") int groupId, @Param("synonyms") String synonyms);
+
+    void createSynonymsGroupTable();
+
+    void truncateSynonymsGroupTable();
+
+    void createSynonymsBelongTable();
+
+    void truncateSynonymsBelongTable();
+
+    /**
+     * 重建同义词所属表
+     */
+    default void rebuildSynonymsBelongTable() {
+        this.truncateSynonymsBelongTable();
+        this.createSynonymsBelongTable();
+    }
+
+    /**
+     * 重建同义词组表
+     */
+    default void rebuildSynonymsGroupTable() {
+        this.truncateSynonymsGroupTable();
+        this.createSynonymsGroupTable();
+    }
 }

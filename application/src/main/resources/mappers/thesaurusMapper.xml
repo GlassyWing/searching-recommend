@@ -58,4 +58,27 @@
         VALUES (#{groupId}, #{synonyms})
     </delete>
 
+    <update id="truncateSynonymsGroupTable">
+        DROP TABLE IF EXISTS <include refid="THESAURUS_GROUP"/>
+    </update>
+
+    <update id="createSynonymsGroupTable">
+        CREATE TABLE <include refid="THESAURUS_GROUP"/> (
+        groupId INTEGER PRIMARY KEY
+        , synonyms VARCHAR
+        ) SALT_BUCKETS=3
+    </update>
+
+    <update id="truncateSynonymsBelongTable">
+        DROP TABLE IF EXISTS <include refid="THESAURUS_BELONG"/>
+    </update>
+
+    <update id="createSynonymsBelongTable">
+        CREATE TABLE <include refid="THESAURUS_BELONG"/> (
+          word VARCHAR NOT NULL
+          , groupId INTEGER NOT NULL
+           CONSTRAINT tb_pk PRIMARY KEY (word, groupId)
+        ) SALT_BUCKETS=3
+    </update>
+
 </mapper>
