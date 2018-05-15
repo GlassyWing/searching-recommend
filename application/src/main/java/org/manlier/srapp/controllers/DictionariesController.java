@@ -13,24 +13,20 @@ import org.manlier.srapp.dto.result.dict.DictQueryResult;
 import org.manlier.srapp.dto.result.segment.SegmentResult;
 import org.manlier.srapp.dto.result.segment.TuneResult;
 import org.manlier.srapp.dto.result.storage.FilesQueryResult;
+import org.manlier.srapp.dto.result.thesaurus.CombineResult;
 import org.manlier.srapp.dto.result.thesaurus.SynonymsGroupQueryResult;
 import org.manlier.srapp.dto.result.thesaurus.SynonymsQueryResult;
-import org.manlier.srapp.dto.result.thesaurus.WordQueryResult;
 import org.manlier.srapp.segment.SegmentException;
 import org.manlier.srapp.segment.SegmentService;
 import org.manlier.srapp.storage.StorageService;
-import org.manlier.srapp.thesaurus.SynonymsConvertor;
-import org.manlier.srapp.thesaurus.ThesaurusFormatException;
-import org.manlier.srapp.thesaurus.ThesaurusService;
+import org.manlier.srapp.thesaurus.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -158,11 +154,27 @@ public class DictionariesController {
         return ResponseEntity.ok(new SynonymsQueryResult(Collections.singletonList(words)));
     }
 
+    /**
+     * 组合多组同义词为一组
+     *
+     * @param map 同义词ID
+     * @return 响应
+     */
+    @PostMapping("/api/v1/thesaurus/synonyms/combine")
+    public ResponseEntity<Result> combineSynonymsGroup(@RequestBody Map<String, Integer[]> map) {
+        Integer[] groupIds = map.get("groupIds");
+        if (groupIds == null) {
+            throw new ThesaurusException("Counld not found params: groupIds ");
+        }
+        SynonymsGroup combination = thesaurusService.combineSynonymsGroups(groupIds);
+        return ResponseEntity.ok(new CombineResult(Collections.singletonList(combination)));
+    }
+
 
     /**
-     * 上传同义词文件，文件格式参照“/resource/comp_synonyms.txt
+     * 上传同义字典文件，文件格式参照“/resource/comp_synonyms.txt
      *
-     * @param files 同义词文件
+     * @param files 同义字典文件
      * @return 响应
      */
     @PostMapping("/api/v1/thesaurus/upload")
@@ -208,6 +220,12 @@ public class DictionariesController {
     @ExceptionHandler(ThesaurusFormatException.class)
     public ResponseEntity handleThesaurusStateException(ThesaurusFormatException e) {
         Error error = new Error(e.getMessage(), 203);
+        return ResponseEntity.badRequest().body(new ErrorResult(error));
+    }
+
+    @ExceptionHandler(ThesaurusImportException.class)
+    public ResponseEntity handleThesaurusImportException(ThesaurusImportException e) {
+        Error error = new Error(e.getMessage(), 204);
         return ResponseEntity.badRequest().body(new ErrorResult(error));
     }
 }

@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,6 +79,11 @@ public class ThesaurusServiceImpl
         dbChangeNotifier.onNext(Optional.empty());
     }
 
+    @Override
+    public SynonymsGroup getSynonymsGroupById(int groupId) {
+        return thesaurusDAO.getSynonymsByGroupId(groupId).toSynonymsGroup();
+    }
+
     @Transactional
     @Override
     public void addWordsToSynonymsGroup(Set<String> words, int groupId) {
@@ -122,6 +128,7 @@ public class ThesaurusServiceImpl
         thesaurusDAO.addSynonymsGroup(synonymsGroupStr);
 
         Integer groupId = synonymsGroupStr.getGroupId();
+        synonymsGroup.setGroupId(groupId);
 
         if (addBelong) {
             //  添加所属关系
@@ -165,9 +172,10 @@ public class ThesaurusServiceImpl
                     .forEach(synonymsGroup -> this.addSynonymGroup(synonymsGroup, false, false));
             thesaurusDAO.rebuildSynonymsBelongTable();
             this.rebuildBelongTo();
+
             IDs.clear();
+            Files.deleteIfExists(thesaurusPath);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new ThesaurusImportException("Fail to import thesaurus", e);
         }
     }
@@ -192,7 +200,6 @@ public class ThesaurusServiceImpl
                     for (SynonymsGroup synonymsGroup : page) {
                         Set<String> synonyms = combineSynonymsGroups(combineGroupIDs(synonymsGroup));
                         if (synonyms.size() > 0) {
-                            System.out.println("Size: " + synonyms.size());
                             writer.append(SynonymsConvertor.parseToString(synonyms))
                                     .append("\n");
                         }
@@ -226,9 +233,10 @@ public class ThesaurusServiceImpl
                     a.addAll(b);
                     return a;
                 }).orElseGet(HashSet::new);
-        Set<Integer> difference = groupIds.parallelStream().filter(groupId -> !IDs.contains(groupId))
+        Set<Integer> difference = groupIds
+                .parallelStream()
+                .filter(groupId -> !IDs.contains(groupId))
                 .collect(Collectors.toSet());
-//        System.out.println("difference size: " + difference.size());
         groupIds.addAll(difference.parallelStream()
                 .map(thesaurusDAO::getSynonymsByGroupId)
                 .map(SynonymsGroupStr::toSynonymsGroup)
@@ -254,6 +262,21 @@ public class ThesaurusServiceImpl
                     a.addAll(b);
                     return a;
                 }).orElseGet(HashSet::new);
+    }
+
+    /**
+     * 组合多组同义词，并删除原来的同义词组
+     *
+     * @param groupIDs 同义词组ID
+     */
+    @Transactional
+    public SynonymsGroup combineSynonymsGroups(Integer... groupIDs) {
+        Set<Integer> groupSets = new HashSet<>(Arrays.asList(groupIDs));
+        Set<String> synonyms = combineSynonymsGroups(groupSets);
+        groupSets.parallelStream().forEach(this::deleteSynonymsGroup);
+        SynonymsGroup synonymsGroup = new SynonymsGroup(synonyms);
+        addSynonymGroup(synonymsGroup);
+        return synonymsGroup;
     }
 
     @Override
