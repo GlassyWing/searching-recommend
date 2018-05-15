@@ -10,4 +10,7 @@ public class Limits {
 
     //  所能推荐的最大构件数量
     public static final int MAX_RECOMMEND_COMP_NUM = 30;
+
+    // 所能查找到的最多历史纪录数
+    public static final int MAX_HISTORY_NUM = 50;
 }
