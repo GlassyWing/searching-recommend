@@ -38,19 +38,19 @@
 
 * [better-jieba](https://github.com/GlassyWing/better-jieba)
 
-下载完成后使用`mvn install -DskipTests`安装
+  下载完成后使用`mvn install -DskipTests`安装
 
 * [better-jieba-solr](https://github.com/GlassyWing/better-jieba-solr)
 
-下载完成后使用`mvn package -DskipTests`得到better-jieba-solr-xxx.jar
+  下载完成后使用`mvn package -DskipTests`得到better-jieba-solr-xxx.jar
 
 * [components-recommend](https://github.com/GlassyWing/components-recommend)
 
-下载完成后使用`mvn install -DskipTests`安装
+  下载完成后使用`mvn install -DskipTests`安装
 
 * [hbase-indexer-phoenix-mapper](https://github.com/GlassyWing/hbase-indexer-phoenix-mapper)
 
-下载完成后使用`mvn package -DskipTests`得到hbase-indexer-phoenix-mapper-xxx.jar
+  下载完成后使用`mvn package -DskipTests`得到hbase-indexer-phoenix-mapper-xxx.jar
 
 
 在依赖包完成安装或打包后，下载该项目，若你使用 Idea 开发工具，将会自动进行 maven 依赖库的安装。
@@ -72,7 +72,7 @@
 ```shell
 psql.py jieba_dict.sql  recommend.sql  thesaurus.sql
 psql.py -t JIEBA_DICT jieba_dict.csv
-psql.py -t JIEBA_DICT jieba_dict.csv
+psql.py -t THESAURUS_GROUP thesaurus_group.csv
 psql.py -t THESAURUS_BELONG thesaurus_belong.csv
 psql.py -t USERS users.csv
 psql.py -t COMPONENTS components.csv
