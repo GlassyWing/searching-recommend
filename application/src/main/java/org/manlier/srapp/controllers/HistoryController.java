@@ -1,6 +1,7 @@
 package org.manlier.srapp.controllers;
 
 import org.apache.ibatis.annotations.Param;
+import org.manlier.srapp.constraints.Limits;
 import org.manlier.srapp.domain.HistoryRecord;
 import org.manlier.srapp.domain.TotalFreq;
 import org.manlier.srapp.domain.NumOfUsers;
@@ -30,13 +31,13 @@ public class HistoryController {
     }
 
     @PostMapping("/api/v1/history")
-    public ResponseEntity<Result> addHistoryRecord(@Param("record") String record) {
+    public ResponseEntity<Result> addHistoryRecord(@RequestParam("record") String record) {
         historyService.addHistoryRecord(record);
         return ResponseEntity.ok(new HistoryQueryResult(Collections.singletonList(record)));
     }
 
     @GetMapping("/api/v1/history")
-    public ResponseEntity<Result> getHistoryForUser(@Param("userName") String userName
+    public ResponseEntity<Result> getHistoryForUser(@RequestParam("userName") String userName
             , @Param("compName") String compName) {
         List<HistoryRecord> historyRecords = historyService.getHistoryForUser(userName, compName);
         return ResponseEntity.ok(new HistoryQueryResultForUser(historyRecords));
@@ -49,8 +50,22 @@ public class HistoryController {
     }
 
     @GetMapping("/api/v1/history/total")
-    public ResponseEntity<Result> getTotalFreq(@Param("compName") String compName) {
+    public ResponseEntity<Result> getTotalFreq(@RequestParam("compName") String compName) {
         List<TotalFreq> totalFreqs = historyService.getTotalFreq(compName);
+        return ResponseEntity.ok(new TotalFreqsQueryResult(totalFreqs));
+    }
+
+    @GetMapping("/api/v1/history/popular/population")
+    public ResponseEntity<Result> getPopularUsagesPopulation(@RequestParam("limit") int limit) {
+        limit = Math.min(limit, Limits.MAX_HISTORY_NUM);
+        List<NumOfUsers> numOfUsers = historyService.getPopularUsagesPopulation(limit);
+        return ResponseEntity.ok(new NumOfUsersQueryResult(numOfUsers));
+    }
+
+    @GetMapping("/api/v1/history/popular/count")
+    public ResponseEntity<Result> getPopulatedUsagesCount(@RequestParam("limit") int limit) {
+        limit = Math.min(limit, Limits.MAX_HISTORY_NUM);
+        List<TotalFreq> totalFreqs = historyService.getPopulatedUsagesCount(limit);
         return ResponseEntity.ok(new TotalFreqsQueryResult(totalFreqs));
     }
 

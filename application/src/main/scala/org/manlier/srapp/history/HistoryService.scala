@@ -10,7 +10,7 @@ trait HistoryService {
   /**
     * 添加一条历史记录
     *
-    * @param historyRecord  历史纪录
+    * @param historyRecord 历史纪录
     */
   def addHistoryRecord(historyRecord: String)
 
@@ -25,7 +25,7 @@ trait HistoryService {
   /**
     * 获得用户使用构件1之后又使用了哪些构件
     *
-    * @param userName     用户名
+    * @param userName 用户名
     * @param compName 构件1的名字
     * @return 使用历史
     */
@@ -38,6 +38,22 @@ trait HistoryService {
     * @return 总次数
     */
   def getTotalFreq(compName: String): java.util.List[TotalFreq]
+
+  /**
+    * 获得受欢迎的构件对的使用人数
+    *
+    * @param limit 指定构件对的数量
+    * @return
+    */
+  def getPopularUsagesPopulation(limit: Int): java.util.List[NumOfUsers]
+
+  /**
+    * 获得受欢迎的构件对的使用次数
+    *
+    * @param limit  指定构件对的数量
+    * @return
+    */
+  def getPopulatedUsagesCount(limit: Int): java.util.List[TotalFreq]
 
   def getHistoryRecordStream: DStream[(String, String, String, Long)]
 

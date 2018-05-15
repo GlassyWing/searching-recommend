@@ -5,6 +5,7 @@ import org.manlier.srapp.domain.HistoryRecord;
 import org.manlier.srapp.domain.TotalFreq;
 import org.manlier.srapp.domain.NumOfUsers;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -31,9 +32,25 @@ public interface HistoryDAO {
     /**
      * 获得使用完构件1又使用构件2的总次数
      *
-     * @param compName       构件1的名字
+     * @param compName 构件1的名字
      * @return 总次数
      */
     List<TotalFreq> getTotalFreq(@Param("compName") String compName);
+
+    /**
+     * 获得受欢迎的构件对的使用人数
+     *
+     * @param limit 指定构件对的数量
+     * @return
+     */
+    List<NumOfUsers> getPopularUsagesPopulation(@Param("limit") int limit);
+
+    /**
+     * 获得受欢迎的构件对的使用次数
+     *
+     * @param limit 指定构件对的数量
+     * @return
+     */
+    List<TotalFreq> getPopulatedUsagesCount(@Param("limit") int limit);
 
 }

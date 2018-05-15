@@ -24,4 +24,20 @@
         ORDER BY totalFreq DESC
     </select>
 
+    <select id="getPopularUsagesPopulation" resultType="NumOfUsers">
+        SELECT compName, followCompName, count(*) as quantity
+        FROM history
+        GROUP BY compName, followCompName
+        ORDER BY quantity DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="getPopulatedUsagesCount" resultType="TotalFreq">
+        SELECT compName, followCompName, SUM(freq) AS totalFreq
+        FROM  history
+        GROUP BY compName, followCompName
+        ORDER BY totalFreq DESC
+        LIMIT #{limit}
+    </select>
+
 </mapper>

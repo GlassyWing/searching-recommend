@@ -145,4 +145,24 @@ class HistoryServiceImpl(@Autowired val sparkSession: SparkSession
   override def getTotalFreq(compName: String): util.List[TotalFreq] = {
     historyDAO.getTotalFreq(compName)
   }
+
+  /**
+    * 获得受欢迎的构件对的使用人数
+    *
+    * @param limit 指定构件对的数量
+    * @return
+    */
+  override def getPopularUsagesPopulation(limit: Int): util.List[NumOfUsers] = {
+    historyDAO.getPopularUsagesPopulation(limit)
+  }
+
+  /**
+    * 获得受欢迎的构件对的使用次数
+    *
+    * @param limit 指定构件对的数量
+    * @return
+    */
+  override def getPopulatedUsagesCount(limit: Int): util.List[TotalFreq] = {
+    historyDAO.getPopulatedUsagesCount(limit)
+  }
 }
