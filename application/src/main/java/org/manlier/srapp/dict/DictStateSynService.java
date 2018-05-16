@@ -51,9 +51,13 @@ public class DictStateSynService implements Consumer<String> {
 
     @Override
     public void accept(String s) {
-        switch (SynSignal.valueOf(s)) {
-            case DICT_SYN_DONE:
-                CompletableFuture.runAsync(this::runIndexSyncJob);
+        try {
+            switch (SynSignal.valueOf(s)) {
+                case DICT_SYN_DONE:
+                    CompletableFuture.runAsync(this::runIndexSyncJob);
+            }
+        } catch (IllegalArgumentException e) {
+            // ignore
         }
     }
 
