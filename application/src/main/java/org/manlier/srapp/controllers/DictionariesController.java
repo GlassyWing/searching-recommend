@@ -146,12 +146,14 @@ public class DictionariesController {
     @PostMapping("/api/v1/thesaurus/synonyms")
     public ResponseEntity<Result> addWordsToGroup(@RequestParam("words") String words
             , @RequestParam(value = "groupId", required = false) Integer groupId) {
+        SynonymsGroup synonymsGroup = new SynonymsGroup(SynonymsConvertor.parseToSet(words));
         if (groupId == null) {
-            thesaurusService.addSynonymGroup(words);
+            thesaurusService.addSynonymGroup(synonymsGroup);
         } else {
             thesaurusService.addWordsToSynonymsGroup(SynonymsConvertor.parseToSet(words), groupId);
+            synonymsGroup.setGroupId(groupId);
         }
-        return ResponseEntity.ok(new SynonymsQueryResult(Collections.singletonList(words)));
+        return ResponseEntity.ok(new SynonymsGroupQueryResult(Collections.singletonList(synonymsGroup)));
     }
 
     /**
