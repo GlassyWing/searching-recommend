@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static org.manlier.srapp.thesaurus.SynonymsConvertor.parseToSet;
+
 @RestController
 @CrossOrigin(origins = "*")
 public class DictionariesController {
@@ -146,11 +148,15 @@ public class DictionariesController {
     @PostMapping("/api/v1/thesaurus/synonyms")
     public ResponseEntity<Result> addWordsToGroup(@RequestParam("words") String words
             , @RequestParam(value = "groupId", required = false) Integer groupId) {
-        SynonymsGroup synonymsGroup = new SynonymsGroup(SynonymsConvertor.parseToSet(words));
+        Set<String> syns = parseToSet(words);
+        if (syns.size() <= 1) {
+            throw new ThesaurusFormatException("Synonyms must be contains at least 2 words.");
+        }
+        SynonymsGroup synonymsGroup = new SynonymsGroup(syns);
         if (groupId == null) {
             thesaurusService.addSynonymGroup(synonymsGroup);
         } else {
-            thesaurusService.addWordsToSynonymsGroup(SynonymsConvertor.parseToSet(words), groupId);
+            thesaurusService.addWordsToSynonymsGroup(syns, groupId);
             synonymsGroup.setGroupId(groupId);
         }
         return ResponseEntity.ok(new SynonymsGroupQueryResult(Collections.singletonList(synonymsGroup)));
