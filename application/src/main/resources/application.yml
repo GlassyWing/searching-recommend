@@ -3,7 +3,7 @@ spring:
     name: Searching And Recommend
   datasource:
     driver-class-name: org.apache.phoenix.jdbc.PhoenixDriver
-    url: jdbc:phoenix:node2.hdp:2181
+    url: jdbc:phoenix:localhost:2181
   servlet:
       multipart:
         max-file-size: 3MB
@@ -13,12 +13,12 @@ kafka:
     topics:
       - history
     kafka-params-consumer:
-      "[bootstrap.servers]": node2.hdp:9092
+      "[bootstrap.servers]": localhost:9092
       "[group.id]": history
       "[key.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
       "[value.deserializer]": org.apache.kafka.common.serialization.StringDeserializer
     kafka-params-producer:
-      "[bootstrap.servers]": node2.hdp:9092
+      "[bootstrap.servers]": localhost:9092
       "[key.serializer]": org.apache.kafka.common.serialization.StringSerializer
       "[value.serializer]": org.apache.kafka.common.serialization.StringSerializer
       "[linger.ms]": 1
@@ -27,10 +27,10 @@ kafka:
       "[client.id]": history-producer
 dict:
   syn:
-    zkHosts: node2.hdp:2181
+    zkHosts: localhost:2181
     zkPath: /test
 solr:
-  address: http://node2.hdp:8983/solr
+  address: http://localhost:8983/solr
   connectionTimeout: 10000
   socketTimeout: 60000
   collectionName: compsCollection

@@ -156,3 +156,6 @@ solr:
   socketTimeout: 60000
   collectionName: compsCollection
 ```
+## 相关项目
+
+[基于solr的构件检索与推荐系统 web端应用](https://github.com/GlassyWing/srapp)
