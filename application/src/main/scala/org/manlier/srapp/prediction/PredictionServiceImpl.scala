@@ -96,7 +96,7 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
     prediction.createOrReplaceTempView("prediction")
     getUsers.createOrReplaceTempView("users")
     getComponents.createOrReplaceTempView("components")
-    val predict = spark.sql(
+    var predict = spark.sql(
       """
         | SELECT b.uuid as USERNAME, a.COMPNAME as COMPNAME, a.FOLLOWCOMPNAME as FOLLOWCOMPNAME, prediction
         | FROM
@@ -110,7 +110,9 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
         |  JOIN users b
         | ON a.userId = b.id
       """.stripMargin)
-    predict.coalesce(parallelism)
+    predict = predict.coalesce(parallelism)
+    prediction.unpersist()
+    predict
   }
 
   /**
