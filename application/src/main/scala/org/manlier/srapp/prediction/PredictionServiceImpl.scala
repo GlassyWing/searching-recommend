@@ -18,13 +18,14 @@ import org.apache.phoenix.spark._
 import org.manlier.srapp.dao.PredictionDAO
 import org.manlier.srapp.domain.Prediction
 import org.slf4j.{Logger, LoggerFactory}
+import org.springframework.beans.factory.DisposableBean
 import org.springframework.stereotype.Service
 
 @Service
 class PredictionServiceImpl(@Autowired val spark: SparkSession
                             , @Autowired val hbaseConfig: Configuration
                             , @Autowired val predictionDAO: PredictionDAO)
-  extends PredictionService with Serializable {
+  extends PredictionService with Serializable with DisposableBean{
 
   private val logger: Logger = LoggerFactory.getLogger(getClass.getName)
 
@@ -42,7 +43,7 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
     * 初始化工作
     */
   override def init(): Unit = {
-    Observable.interval(3, TimeUnit.MINUTES)
+    Observable.interval(2, TimeUnit.MINUTES)
       .subscribeOn(Schedulers.computation())
       .subscribe(new Consumer[lang.Long] {
         override def accept(t: lang.Long): Unit = {
@@ -214,5 +215,9 @@ class PredictionServiceImpl(@Autowired val spark: SparkSession
 
   override def getPrediction(userName: String, compName: String, num: Int): util.List[Prediction] = {
     predictionDAO.getPrediction(userName, compName, num)
+  }
+
+  override def destroy(): Unit = {
+    spark.stop()
   }
 }
