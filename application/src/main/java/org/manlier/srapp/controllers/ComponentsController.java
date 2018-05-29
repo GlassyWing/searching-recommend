@@ -65,7 +65,7 @@ public class ComponentsController {
     }
 
     /**
-     * 按构件name查询构件
+     * 按构件name进行模糊查询
      *
      * @param name 构件name
      * @return 响应结果
@@ -73,16 +73,8 @@ public class ComponentsController {
     @GetMapping(value = "/api/v1/comps/{name:.+}")
     public ResponseEntity<Result> searchComp(@PathVariable("name") String name) {
         logger.debug("Try to find specified component with id: " + name);
-        Optional<Component> component = service.searchComp(name);
-        ComponentsQueryResult queryResult;
-        if (component.isPresent()) {
-            queryResult = new ComponentsQueryResult(
-                    Collections.singletonList(component.get()));
-            logger.debug("Component found.");
-        } else {
-            queryResult = new ComponentsQueryResult(Collections.emptyList());
-        }
-        return ResponseEntity.ok(queryResult);
+        List<Component> components = service.searchCompLike(name);
+        return ResponseEntity.ok(new ComponentsQueryResult(components));
     }
 
     /**

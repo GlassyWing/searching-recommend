@@ -9,6 +9,10 @@
         SELECT * FROM components WHERE name = #{name}
     </select>
 
+    <select id="getComponentByNameLike" resultType="Component">
+        SELECT * FROM components WHERE name LIKE "%"#{nameLike}"%"
+    </select>
+
     <select id="getComponentById" resultType="Component">
         SELECT * FROM components WHERE id = #{id}
     </select>

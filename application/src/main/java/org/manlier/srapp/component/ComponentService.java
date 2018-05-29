@@ -18,12 +18,20 @@ public interface ComponentService extends FileImporter {
     Optional<Component> searchComp(String name);
 
     /**
-     * 通过构件名搜索构件
+     * 通过构件名模糊查询构件
      *
-     * @param name 构件名
+     * @param nameLike  （部分）构件名
+     * @return  构件
+     */
+    List<Component> searchCompLike(String nameLike);
+
+    /**
+     * 通过构件id搜索构件
+     *
+     * @param id 构件id
      * @return 构件
      */
-    Optional<Component> searchComp(int name);
+    Optional<Component> searchComp(int id);
 
     /**
      * 通过构件描述搜索构件

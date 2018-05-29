@@ -55,6 +55,11 @@ public class ComponentServiceImpl extends AbstractFileImporter<Component> implem
     }
 
     @Override
+    public List<Component> searchCompLike(String nameLike) {
+        return compsDAO.getComponentByNameLike(nameLike);
+    }
+
+    @Override
     public Optional<Component> searchComp(int id) {
         Component component = compsDAO.getComponentById(id);
         if (component == null) {

@@ -20,6 +20,14 @@ public interface ComponentDAO {
     Component getComponentByName(@Param("name") String compName) throws DataAccessException;
 
     /**
+     * 根据构件名进行模糊查询
+     *
+     * @param nameLike  构件名
+     * @return  构件
+     */
+    List<Component> getComponentByNameLike(@Param("nameLike") String nameLike) throws DataAccessException;
+
+    /**
      * 通过构件ID获得构件
      *
      * @param id 构件编号
