@@ -10,7 +10,7 @@
     </select>
 
     <select id="getComponentByNameLike" resultType="Component">
-        SELECT * FROM components WHERE name LIKE "%"#{nameLike}"%"
+        SELECT * FROM components WHERE name LIKE '%' || #{nameLike} || '%'
     </select>
 
     <select id="getComponentById" resultType="Component">
