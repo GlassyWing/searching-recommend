@@ -1,5 +1,6 @@
 package org.manlier.srapp.history
 
+import java.sql.Connection
 import java.util
 import java.util.concurrent.CompletableFuture
 
@@ -70,19 +71,24 @@ class HistoryServiceImpl(@Autowired val sparkSession: SparkSession
     historyStream.foreachRDD { rdd =>
       rdd.foreachPartition(partitionRecords => {
         if (partitionRecords.nonEmpty) {
+          var conn: Option[Connection] = None
           try {
-            val conn = PhoenixPool.getConnection
-            val stat = conn.createStatement()
-            conn.setAutoCommit(false)
+            conn = Option.apply(PhoenixPool.getConnection)
+            val stat = conn.get.createStatement()
+            conn.get.setAutoCommit(false)
             partitionRecords.foreach(tuple => {
               //              println(tuple)
               stat.addBatch(HistoryDBUtil.generateUpsertSQL(tuple._1, tuple._2, tuple._3, tuple._4))
             })
             stat.executeBatch()
-            conn.commit()
+            conn.get.commit()
           } catch {
             case e: Exception =>
               e.printStackTrace()
+          } finally {
+            if (conn.isDefined) {
+              conn.get.close()
+            }
           }
         }
       })
